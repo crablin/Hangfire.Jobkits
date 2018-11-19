@@ -1,0 +1,92 @@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
+@using System.Linq
+@using Hangfire.Dashboard.Pages
+@using Hangfire.JobKits
+@using Hangfire.JobKits.Dashboard.Controls
+@using Hangfire.JobKits.Dashboard.Controls.InputBox
+@using Hangfire.JobKits.Worker
+@using Hangfire.JobKits.Resources
+@inherits Hangfire.Dashboard.RazorPage
+
+@{
+    string selectedCategory = this.SelectedCategory;
+    StandbyMap jobMap = this.Map;
+    JobKitOptions options = this.Options;
+    Layout = new LayoutPage(Strings.Standby_Title);
+    var availableJobs = jobMap.JobCollection.Where(x => x.Value.CategoryName == selectedCategory).Select(x => x.Value).ToArray();
+}
+
+<link rel="stylesheet" type="text/css" href="@Url.To(JobKitRoute.Standby.CssUrl)" />
+<script type="text/javascript">
+    var launchUrl = '@Url.To(JobKitRoute.Standby.LaunchUrl)';
+    var recurringUrl = '@Url.To(JobKitRoute.Standby.LaunchRecurringUrl)';
+    var idFieldName = '@StandbyKey.IdField';
+    var jobLinkBaseUrl = '@Url.JobDetails("")';
+    var requireConfirmation = @options.RequireConfirmation.ToString().ToLowerInvariant();
+    var messageLaunch = {
+        confirm: '@Strings.Standby_Launch',
+        confirmRecurring: '@Strings.Standby_LaunchRecurring',
+        success: '@Strings.Standby_Success',
+        successRecurring: '@Strings.Standby_SuccessRecurring',
+        failure: '@Strings.Standby_Failure'
+    };
+</script>
+<script type="text/javascript" src="@Url.To(JobKitRoute.Standby.JsUrl)"></script>
+
+    <div class="row">
+        <div class="col-md-3">
+            @SidebarControl.Render(Html, selectedCategory, jobMap)
+        </div>
+        <div class="col-md-9">
+            <h1 class="page-header">@selectedCategory</h1>
+            @foreach (var job in availableJobs)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row" onclick="onCollapse(this, '@job.Id');">
+                            <div class="col-sm-10">
+                                <h4>
+                                    @job.ActionName
+                                    @if (!string.IsNullOrEmpty(job.Name))
+                                    {
+                                        <span class="subtitle">@job.Name</span>
+                                    }
+                                </h4>
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <span class="btn glyphicon @(options.AlwaysCollapsed ? "glyphicon-chevron-up" : "glyphicon-chevron-down")" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="panel-body @(options.AlwaysCollapsed ? "" : "hide")" id="@job.Id-body">
+                        @if (!string.IsNullOrWhiteSpace(job.Description))
+                        {
+                            <p>@job.Description</p>
+                        }
+                            <form id="@job.Id">
+                                @foreach (var parameter in job.Method.GetParameters())
+                                {
+                                    var control = InputControl.CreateControl(parameter, job);
+                                    if (control is NullControl) { continue; }
+
+                                    <div class="form-group">
+                                        @Html.RenderPartial(control)
+                                    </div>
+                                }
+                                <button type="button" class="btn btn-primary" onclick="onEnqueue(this, '@job.Id');return false;">@(Strings.Button_Created)</button>
+                                @if (!string.IsNullOrEmpty(job.RecurringJobId))
+                                {
+                                    <span class="cron-input">
+                                        <input type="text" name="recurring_cron" class="form-control" placeholder="Cron" value="@job.RecurringJobCron">
+                                        <button class="btn btn-outline-success" type="button" onclick="onRecurring(this, '@job.Id');return false;">@(Strings.Button_Recurring)</button>
+                                        
+                                    </span>
+                                }
+                            </form>
+                        <div id="@job.Id-alerts" class="panel-alerts"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>

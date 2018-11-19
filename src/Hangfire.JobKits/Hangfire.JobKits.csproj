@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RazorSrcFiles Include="Dashboard\*.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RazorSrcFiles Remove="Dashboard\StandbyPage.cshtml" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RazorViewsCodeGenDirectory>$(MsBuildProjectDirectory)\</RazorViewsCodeGenDirectory>
+    <Copyright>MIT</Copyright>
+    <Authors>Crab Lin</Authors>
+    <Description>Collection Job List on Hangfire Page
+It can launch job to background and recurring</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Dashboard\Contents\standby.css" />
+    <None Remove="Dashboard\Contents\standby.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Dashboard\Contents\standby.css" />
+    <EmbeddedResource Include="Dashboard\Contents\standby.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.6.20" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="2.1.1" />
+    <PackageReference Include="RazorGenerator.MsBuild" Version="2.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dashboard\Contents\resx\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Dashboard\Contents\resx\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Hangfire.JobKits.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
