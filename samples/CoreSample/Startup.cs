@@ -71,13 +71,7 @@ namespace CoreSample
         {
             var builder = new ContainerBuilder();
 
-            // 註冊相依注入介面
-            var registerAssemblies = AssemblyHelper.GetAssemblies("HangfireWeb");
-
-            foreach (var assembly in registerAssemblies)
-            {
-                builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
-            }
+            builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
 
             builder.Populate(services);
 
@@ -94,40 +88,6 @@ namespace CoreSample
             return new AutofacServiceProvider(container);
         }
     }
-
-    public class AssemblyHelper
-    {
-        /// <summary>
-        /// 取得全部的 Assembly
-        /// </summary>
-        /// <param name="assemblyName">Name of the assembly.</param>
-        /// <returns></returns>
-        public static IEnumerable<Assembly> GetAssemblies(string assemblyName)
-        {
-            return GetAssemblies(assemblyName, new string[] { });
-        }
-
-        /// <summary>
-        /// 取得全部的 Assembly 
-        /// </summary>
-        /// <param name="assemblyName">Assembly 名稱</param>
-        /// <param name="excludedName">排除名稱</param>
-        /// <returns></returns>
-        public static IEnumerable<Assembly> GetAssemblies(string assemblyName, string[] excludedName)
-        {
-            var dependencies = DependencyContext.Default.RuntimeLibraries
-                                                .Where(lib =>
-                                                       lib.Name == assemblyName ||
-                                                       lib.Name.StartsWith(assemblyName, System.StringComparison.Ordinal));
-
-            foreach (var library in dependencies)
-            {
-                if (excludedName.Any(e => string.Compare(e, library.Name, true) == 0)) continue;
-
-                yield return Assembly.Load(new AssemblyName(library.Name));
-            }
-
-        }
-    }
+    
 
 }

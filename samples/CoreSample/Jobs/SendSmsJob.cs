@@ -25,5 +25,6 @@ namespace CoreSample.Jobs
 
             context.WriteLine();
         }
+
     }
 }

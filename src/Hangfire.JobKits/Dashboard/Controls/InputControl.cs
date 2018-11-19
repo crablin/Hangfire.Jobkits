@@ -33,9 +33,11 @@ namespace Hangfire.JobKits.Dashboard.Controls
 
                 case var _ when parameterType == typeof(string):
                     return new StringControl(parameter);
+                case var _ when parameter.ParameterType.IsEnum:
+                    return new SelectControl(parameter);
 
                 default:
-                    return new StringControl(parameter);
+                    return new TextareaControl(parameter);
             }
         }
     }

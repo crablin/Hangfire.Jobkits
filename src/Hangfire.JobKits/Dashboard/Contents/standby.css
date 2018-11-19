@@ -20,6 +20,10 @@
     border-color: #e7e7e7;
 }
 
+.json-input {
+    min-height: 180px;
+}
+
 .cron-input {
     width: 200px;
     display: inline-flex;

@@ -18,6 +18,9 @@
     <Authors>Crab Lin</Authors>
     <Description>Collection Job List on Hangfire Page
 It can launch job to background and recurring</Description>
+    <Version>1.1.0</Version>
+    <PackageProjectUrl>https://github.com/crablin/Hangfire.Jobkits</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/crablin/Hangfire.Jobkits</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
