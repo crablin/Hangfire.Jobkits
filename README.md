@@ -14,6 +14,7 @@ Hangfire.Jobkits providers define standby job to launch on background or recurri
 - **Definition job** : category job and method
 - **Auto generate parameters** : get method parameters to queue job on hangfire.
 - **Set recurring job** : do not add recurring job on startup.cs, you can launch job on recurring anytime.
+- **Support anothers** : support denpendency injection and Hangfire.Console 
 
 ## Steup
 

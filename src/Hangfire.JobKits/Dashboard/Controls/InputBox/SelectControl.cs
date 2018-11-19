@@ -1,13 +1,17 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 using Hangfire.Dashboard;
 
 namespace Hangfire.JobKits.Dashboard.Controls.InputBox
 {
-    internal sealed class StringControl : RazorPage
+
+    internal sealed class SelectControl : RazorPage
     {
         public ParameterInfo Parameter { get; }
 
-        public StringControl(ParameterInfo parameter)
+        public SelectControl(ParameterInfo parameter)
         {
             Parameter = parameter;
         }
@@ -21,7 +25,15 @@ namespace Hangfire.JobKits.Dashboard.Controls.InputBox
 
             WriteLiteral("<div class=\"input-group\">");
             WriteLiteral($"<div class=\"input-group-addon\">{Parameter.Name}</div>");
-            WriteLiteral($"<input type=\"text\" name=\"{Parameter.Name}\" placeholder=\"{description}\" class=\"form-control\" value=\"{defaultValue}\" />");
+            WriteLiteral($"<select class=\"form-control\" name=\"{Parameter.Name}\" value=\"{defaultValue}\">");
+
+            foreach (var item in Enum.GetValues(Parameter.ParameterType))
+            {
+                var attr = item.ToString() == defaultValue ? " selected" : "";
+                WriteLiteral($"<option{attr}>{item}</option>");
+            }
+
+            WriteLiteral("</select>");
             WriteLiteral("</div>");
         }
     }
