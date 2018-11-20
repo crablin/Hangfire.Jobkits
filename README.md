@@ -79,14 +79,14 @@ public class ReportJob
 
 ``` c#
 // ReportJob.cs
-[JobLauncher(CategoryName ="Report")]
+[JobLauncher("Report")]
 public class ReportJob
 {
     //code ...
 }
 
 // MailJob.cs
-[JobLauncher(CategoryName = "Email")]
+[JobLauncher("Email")]
 public class MailJob
 {
     //code ...
@@ -97,15 +97,15 @@ public class MailJob
 
 - **Name** : display name
 - **Description** : describe this method how to do
-- **Queue** : use "critical" and "default" to prioritize your jobs
+- **UseQueue** : use queue state on background job
 
 ``` c#
-[JobLauncher(CategoryName ="Report")]
+[JobLauncher("Report")]
 public class ReportJob
 {
-    [JobMethod(Name = "Process Report",
+    [JobMethod("Process Report",
                Description = "the report that save login user "
-               Queue = "critical")]
+               UseQueue)]
     public void Process(DateTime start, DateTime end)
     {
         //code ... 
@@ -130,7 +130,7 @@ if the method use to recurring job, you must be setting :
 - **RecurringJobCron** : default reccuring job cron value
 
 ``` c#
-[JobLauncher(CategoryName ="Report")]
+[JobLauncher("Report")]
 public class ReportJob
 {
     [JobMethod(RecurringJobId = "Report.Process",
@@ -150,7 +150,7 @@ this attribute is option. you don't decorate that on method.
 - **Description** : input placeholder
 
 ``` c#
-[JobLauncher(CategoryName ="Report")]
+[JobLauncher("Report")]
 public class ReportJob
 {
     [JobMethod]
