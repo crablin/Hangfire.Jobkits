@@ -10,8 +10,8 @@ namespace Hangfire.JobKits.Worker
         public string Id { get; }
         public string CategoryName { get; }
         public string Name { get; }
-        public string Queue { get; }
         public string Description { get; }
+        public bool UseQueue { get; }
         public string RecurringJobId { get; }
         public string RecurringJobCron { get; }
         public MethodInfo Method { get; }
@@ -26,8 +26,8 @@ namespace Hangfire.JobKits.Worker
             CategoryName = launcherAttribute.CategoryName ?? method.DeclaringType?.Name ?? "Default";
 
             Name = methodAttribute.Name;
-            Queue = methodAttribute.Queue ?? "default";
             Description = methodAttribute.Description;
+            UseQueue = methodAttribute.UseQueue;
 
             RecurringJobId = methodAttribute.RecurringJobId;
             RecurringJobCron = methodAttribute.RecurringJobCron ?? "0/30 * * * *";

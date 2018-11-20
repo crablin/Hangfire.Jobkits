@@ -344,32 +344,33 @@ WriteLiteral("-body\">\r\n");
             
             #line default
             #line hidden
-WriteLiteral("                            <p>");
-
-
-            
-            #line 65 "..\..\Dashboard\StandbyPage.cshtml"
-                          Write(job.Description);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</p>\r\n");
+WriteLiteral("                            <div class=\"alert alert-info\" role=\"alert\">\r\n        " +
+"                        ");
 
 
             
             #line 66 "..\..\Dashboard\StandbyPage.cshtml"
+                           Write(job.Description);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n                            </div>\r\n");
+
+
+            
+            #line 68 "..\..\Dashboard\StandbyPage.cshtml"
                         }
 
             
             #line default
             #line hidden
-WriteLiteral("                            <form id=\"");
+WriteLiteral("                        <form id=\"");
 
 
             
-            #line 67 "..\..\Dashboard\StandbyPage.cshtml"
-                                 Write(job.Id);
+            #line 69 "..\..\Dashboard\StandbyPage.cshtml"
+                             Write(job.Id);
 
             
             #line default
@@ -378,44 +379,44 @@ WriteLiteral("\">\r\n");
 
 
             
-            #line 68 "..\..\Dashboard\StandbyPage.cshtml"
-                                 foreach (var parameter in job.Method.GetParameters())
-                                {
-                                    var control = InputControl.CreateControl(parameter, job);
-                                    if (control is NullControl) { continue; }
+            #line 70 "..\..\Dashboard\StandbyPage.cshtml"
+                             foreach (var parameter in job.Method.GetParameters())
+                            {
+                                var control = InputControl.CreateControl(parameter, job);
+                                if (control is NullControl) { continue; }
 
 
             
             #line default
             #line hidden
-WriteLiteral("                                    <div class=\"form-group\">\r\n                   " +
-"                     ");
-
-
-            
-            #line 74 "..\..\Dashboard\StandbyPage.cshtml"
-                                   Write(Html.RenderPartial(control));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                                    </div>\r\n");
+WriteLiteral("                                <div class=\"form-group\">\r\n                       " +
+"             ");
 
 
             
             #line 76 "..\..\Dashboard\StandbyPage.cshtml"
-                                }
+                               Write(Html.RenderPartial(control));
 
             
             #line default
             #line hidden
-WriteLiteral("                                <button type=\"button\" class=\"btn btn-primary\" onc" +
-"lick=\"onEnqueue(this, \'");
+WriteLiteral("\r\n                                </div>\r\n");
 
 
             
-            #line 77 "..\..\Dashboard\StandbyPage.cshtml"
-                                                                                                   Write(job.Id);
+            #line 78 "..\..\Dashboard\StandbyPage.cshtml"
+                            }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                            <button type=\"button\" class=\"btn btn-primary\" onclick" +
+"=\"onEnqueue(this, \'");
+
+
+            
+            #line 79 "..\..\Dashboard\StandbyPage.cshtml"
+                                                                                               Write(job.Id);
 
             
             #line default
@@ -424,8 +425,8 @@ WriteLiteral("\');return false;\">");
 
 
             
-            #line 77 "..\..\Dashboard\StandbyPage.cshtml"
-                                                                                                                             Write(Strings.Button_Created);
+            #line 79 "..\..\Dashboard\StandbyPage.cshtml"
+                                                                                                                         Write(Strings.Button_Created);
 
             
             #line default
@@ -434,32 +435,57 @@ WriteLiteral("</button>\r\n");
 
 
             
-            #line 78 "..\..\Dashboard\StandbyPage.cshtml"
-                                 if (!string.IsNullOrEmpty(job.RecurringJobId))
-                                {
+            #line 80 "..\..\Dashboard\StandbyPage.cshtml"
+                             if (job.UseQueue)
+                            {
 
             
             #line default
             #line hidden
-WriteLiteral("                                    <span class=\"cron-input\">\r\n                  " +
-"                      <input type=\"text\" name=\"recurring_cron\" class=\"form-contr" +
-"ol\" placeholder=\"Cron\" value=\"");
+WriteLiteral(@"                                <div class=""queue-input"">
+                                    <div class="" input-group"">
+                                        <div class=""input-group-addon"">Queue</div>
+                                        <input type=""text"" name=""equeued_state"" class=""form-control"" />
+                                    </div>
+                                </div>
+");
 
 
             
-            #line 81 "..\..\Dashboard\StandbyPage.cshtml"
-                                                                                                                           Write(job.RecurringJobCron);
+            #line 88 "..\..\Dashboard\StandbyPage.cshtml"
+                            }
 
             
             #line default
             #line hidden
-WriteLiteral("\">\r\n                                        <button class=\"btn btn-outline-succes" +
-"s\" type=\"button\" onclick=\"onRecurring(this, \'");
+
+            
+            #line 89 "..\..\Dashboard\StandbyPage.cshtml"
+                             if (!string.IsNullOrEmpty(job.RecurringJobId))
+                            {
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                                <span class=\"cron-input\">\r\n                      " +
+"              <input type=\"text\" name=\"recurring_cron\" class=\"form-control\" plac" +
+"eholder=\"Cron\" value=\"");
 
 
             
-            #line 82 "..\..\Dashboard\StandbyPage.cshtml"
-                                                                                                                     Write(job.Id);
+            #line 92 "..\..\Dashboard\StandbyPage.cshtml"
+                                                                                                                       Write(job.RecurringJobCron);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">\r\n                                    <button class=\"btn btn-success\" type=\"but" +
+"ton\" onclick=\"onRecurring(this, \'");
+
+
+            
+            #line 93 "..\..\Dashboard\StandbyPage.cshtml"
+                                                                                                         Write(job.Id);
 
             
             #line default
@@ -468,28 +494,27 @@ WriteLiteral("\');return false;\">");
 
 
             
-            #line 82 "..\..\Dashboard\StandbyPage.cshtml"
-                                                                                                                                               Write(Strings.Button_Recurring);
+            #line 93 "..\..\Dashboard\StandbyPage.cshtml"
+                                                                                                                                   Write(Strings.Button_Recurring);
 
             
             #line default
             #line hidden
-WriteLiteral("</button>\r\n                                        \r\n                            " +
-"        </span>\r\n");
+WriteLiteral("</button>\r\n\r\n                                </span>\r\n");
 
 
             
-            #line 85 "..\..\Dashboard\StandbyPage.cshtml"
-                                }
+            #line 96 "..\..\Dashboard\StandbyPage.cshtml"
+                            }
 
             
             #line default
             #line hidden
-WriteLiteral("                            </form>\r\n                        <div id=\"");
+WriteLiteral("                        </form>\r\n                        <div id=\"");
 
 
             
-            #line 87 "..\..\Dashboard\StandbyPage.cshtml"
+            #line 98 "..\..\Dashboard\StandbyPage.cshtml"
                             Write(job.Id);
 
             
@@ -500,7 +525,7 @@ WriteLiteral("-alerts\" class=\"panel-alerts\"></div>\r\n                    </d
 
 
             
-            #line 90 "..\..\Dashboard\StandbyPage.cshtml"
+            #line 101 "..\..\Dashboard\StandbyPage.cshtml"
             }
 
             

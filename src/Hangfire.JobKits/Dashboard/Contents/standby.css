@@ -24,6 +24,13 @@
     min-height: 180px;
 }
 
+.queue-input {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    width: 240px;
+}
+
 .cron-input {
     width: 200px;
     display: inline-flex;
@@ -52,6 +59,7 @@
 .subtitle {
     color: #aaa;
     margin-left: 8px;
+    font-size: 0.8em;
 }
 
 .input-group-addon:first-child {

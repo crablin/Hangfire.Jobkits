@@ -8,5 +8,15 @@ namespace Hangfire.JobKits
     public class JobLauncherAttribute : Attribute
     {
         public string CategoryName { get; set; }
+
+        public JobLauncherAttribute()
+        {
+
+        }
+
+        public JobLauncherAttribute(string categoryName)
+        {
+            CategoryName = categoryName;
+        }
     }
 }

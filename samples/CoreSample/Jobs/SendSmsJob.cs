@@ -16,7 +16,7 @@ namespace CoreSample.Jobs
             _sendProgress = sendProgress;
         }
 
-        [JobMethod(RecurringJobId ="SendSms", Name = "發送簡訊")]
+        [JobMethod(RecurringJobId ="SendSms", Name = "發送簡訊", Description = "說明：寄送一筆簡訊資訊")]
         public void Send(PerformContext context, [JobParam(Description = "簡訊文字")] string text)
         {
             context.WriteLine("OK");
