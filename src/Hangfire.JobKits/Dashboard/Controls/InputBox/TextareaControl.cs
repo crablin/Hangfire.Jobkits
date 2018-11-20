@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using Hangfire.Dashboard;
 using Newtonsoft.Json;
 
 namespace Hangfire.JobKits.Dashboard.Controls.InputBox
 {
-
     internal sealed class TextareaControl : RazorPage
     {
         public ParameterInfo Parameter { get; }
@@ -24,14 +21,7 @@ namespace Hangfire.JobKits.Dashboard.Controls.InputBox
         {
             var param = Parameter.GetCustomAttribute<JobParamAttribute>();
 
-            var obj = Activator.CreateInstance(Parameter.ParameterType);
-
-            if (IsList(obj))
-            {
-                Type genericType = obj.GetType().GetGenericArguments()[0];
-
-                ((IList)obj).Add(Activator.CreateInstance(genericType));
-            }
+            var obj = GetGenericInstance(Parameter.ParameterType);
             
             var json = JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {
@@ -44,7 +34,33 @@ namespace Hangfire.JobKits.Dashboard.Controls.InputBox
             WriteLiteral("</div>");
         }
 
-        public bool IsList(object o)
+        internal object GetGenericInstance(Type sourceType)
+        {
+            var obj = Activator.CreateInstance(Parameter.ParameterType);
+
+            if (IsList(obj))
+            {
+                Type genericType = obj.GetType().GetGenericArguments()[0];
+
+                ((IList)obj).Add(Activator.CreateInstance(genericType));
+            }
+            else if (IsDictionary(obj))
+            {
+                Type[] dictType = obj.GetType().GetGenericArguments();
+
+                obj = new[] {
+                    new
+                    {
+                        Key = Activator.CreateInstance(dictType[0]),
+                        Value = Activator.CreateInstance(dictType[1])
+                    }
+                }.ToDictionary(x => x.Key, x => x.Value);
+            }
+
+            return obj;
+        }
+
+        private bool IsList(object o)
         {
             if (o == null) return false;
             return o is IList &&
@@ -52,13 +68,12 @@ namespace Hangfire.JobKits.Dashboard.Controls.InputBox
                    o.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(List<>));
         }
 
-        public bool IsDictionary(object o)
+        private bool IsDictionary(object o)
         {
             if (o == null) return false;
             return o is IDictionary &&
                    o.GetType().IsGenericType &&
                    o.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>));
         }
-
     }
 }

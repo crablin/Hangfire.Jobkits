@@ -3,6 +3,7 @@ using Hangfire.JobKits;
 using Hangfire.Server;
 using CoreSample.Jobs.DI;
 using System.Collections.Generic;
+using System;
 
 namespace CoreSample.Jobs
 {
@@ -42,12 +43,23 @@ namespace CoreSample.Jobs
             context.WriteLine($"Status: {status}");
             context.WriteLine("OK");
         }
+
+        [JobMethod(Name = "Send Dictionary")]
+        public void SendDictionary(PerformContext context, Dictionary<int, MailModel> list, Status status)
+        {
+            context.WriteLine($"Count: {list.Count}");
+            context.WriteLine($"Status: {status}");
+            context.WriteLine("OK");
+        }
     }
 
     public class MailModel
     {
+        public int Id { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
+        public bool IsHtml { get; set; }
+        public DateTime SentTime { get; set; }
     }
 
     public enum Status
