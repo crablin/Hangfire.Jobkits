@@ -53,3 +53,7 @@
     color: #aaa;
     margin-left: 8px;
 }
+
+.input-group-addon:first-child {
+    min-width: 80px;
+}

@@ -98,6 +98,10 @@ namespace Hangfire.JobKits.Worker
                         }
                         break;
 
+                    case string enumString when parameterType.IsEnum:
+                        result.Add(Enum.Parse(parameterType, enumString));
+                        break;
+
                     case string primitiveValue when !string.IsNullOrWhiteSpace(parameterValue):
                         result.Add(JsonConvert.DeserializeObject(primitiveValue, parameterType));
                         break;
