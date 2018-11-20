@@ -35,7 +35,15 @@ namespace Hangfire.JobKits.Worker
                 var standbyJob = Map.JobCollection[infoKey];
 
                 var parameters = await StandbyHelper.CreateParameters(context, standbyJob.Method);
-                var jobId = context.GetBackgroundJobClient().Create(new Job(standbyJob.Method, parameters), new EnqueuedState());
+                var queuedState = new EnqueuedState();
+
+                if (standbyJob.UseQueue)
+                {
+                    var queueString = (await context.Request.GetFormValuesAsync("equeued_state")).LastOrDefault();
+                    queuedState.Queue = queueString;
+                }
+                
+                var jobId = context.GetBackgroundJobClient().Create(new Job(standbyJob.Method, parameters), queuedState);
                 
                 context.Response.StatusCode = 200;
                 await context.Response.WriteAsync(jobId);

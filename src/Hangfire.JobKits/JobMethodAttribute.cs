@@ -7,19 +7,28 @@ namespace Hangfire.JobKits
     [AttributeUsage(AttributeTargets.Method)]
     public class JobMethodAttribute : Attribute
     {
+        public JobMethodAttribute()
+        {
+
+        }
+
+        public JobMethodAttribute(string name)
+        {
+            Name = name;
+        }
+
         /// <summary>
         /// Job name.
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// "critical" or "default"
-        /// </summary>
-        public string Queue { get; set; }
-        /// <summary>
         /// Job description.
         /// </summary>
         public string Description { get; set; }
-
+        /// <summary>
+        /// Background job can assign queue
+        /// </summary>
+        public bool UseQueue { get; set; }
         /// <summary>
         /// recurring job identifier.
         /// </summary>

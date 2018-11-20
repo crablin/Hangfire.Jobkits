@@ -62,28 +62,39 @@
                     <div class="panel-body @(options.AlwaysCollapsed ? "" : "hide")" id="@job.Id-body">
                         @if (!string.IsNullOrWhiteSpace(job.Description))
                         {
-                            <p>@job.Description</p>
+                            <div class="alert alert-info" role="alert">
+                                @job.Description
+                            </div>
                         }
-                            <form id="@job.Id">
-                                @foreach (var parameter in job.Method.GetParameters())
-                                {
-                                    var control = InputControl.CreateControl(parameter, job);
-                                    if (control is NullControl) { continue; }
+                        <form id="@job.Id">
+                            @foreach (var parameter in job.Method.GetParameters())
+                            {
+                                var control = InputControl.CreateControl(parameter, job);
+                                if (control is NullControl) { continue; }
 
-                                    <div class="form-group">
-                                        @Html.RenderPartial(control)
+                                <div class="form-group">
+                                    @Html.RenderPartial(control)
+                                </div>
+                            }
+                            <button type="button" class="btn btn-primary" onclick="onEnqueue(this, '@job.Id');return false;">@(Strings.Button_Created)</button>
+                            @if (job.UseQueue)
+                            {
+                                <div class="queue-input">
+                                    <div class=" input-group">
+                                        <div class="input-group-addon">Queue</div>
+                                        <input type="text" name="equeued_state" class="form-control" />
                                     </div>
-                                }
-                                <button type="button" class="btn btn-primary" onclick="onEnqueue(this, '@job.Id');return false;">@(Strings.Button_Created)</button>
-                                @if (!string.IsNullOrEmpty(job.RecurringJobId))
-                                {
-                                    <span class="cron-input">
-                                        <input type="text" name="recurring_cron" class="form-control" placeholder="Cron" value="@job.RecurringJobCron">
-                                        <button class="btn btn-outline-success" type="button" onclick="onRecurring(this, '@job.Id');return false;">@(Strings.Button_Recurring)</button>
-                                        
-                                    </span>
-                                }
-                            </form>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(job.RecurringJobId))
+                            {
+                                <span class="cron-input">
+                                    <input type="text" name="recurring_cron" class="form-control" placeholder="Cron" value="@job.RecurringJobCron">
+                                    <button class="btn btn-success" type="button" onclick="onRecurring(this, '@job.Id');return false;">@(Strings.Button_Recurring)</button>
+
+                                </span>
+                            }
+                        </form>
                         <div id="@job.Id-alerts" class="panel-alerts"></div>
                     </div>
                 </div>
