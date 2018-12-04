@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Hangfire.Annotations;
 using Hangfire.Dashboard;
 using Hangfire.JobKits.Dashboard;
@@ -17,7 +15,10 @@ namespace Hangfire.JobKits
         [PublicAPI]
         public static IGlobalConfiguration UseJobKits(
             this IGlobalConfiguration configuration, params Assembly[] assemblies)
-            => configuration.UseJobKits(new JobKitOptions { RequireConfirmation = true }, assemblies);
+            => configuration.UseJobKits(new JobKitOptions
+            {
+                RequireConfirmation = true
+            }, assemblies);
 
         [PublicAPI]
         public static IGlobalConfiguration UseJobKits(
@@ -30,7 +31,7 @@ namespace Hangfire.JobKits
                 DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Standby.Url, x => new StandbyPage(map.JobCategories.First().Key, map, options));
                 DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Standby.CategoryUrl, x => new StandbyPage(x.Groups["categoryId"].Value, map, options));
                 DashboardRoutes.Routes.Add(JobKitRoute.Standby.LaunchUrl, new BackgroundJobDispatcher(map));
-                DashboardRoutes.Routes.Add(JobKitRoute.Standby.LaunchRecurringUrl, new RecurringJobDispatcher(map));
+                DashboardRoutes.Routes.Add(JobKitRoute.Standby.LaunchRecurringUrl, new RecurringJobDispatcher(map, options));
 
                 NavigationMenu.Items.Add(page => new MenuItem(Strings.Standby_Title, page.Url.To(JobKitRoute.Standby.Url))
                 {
