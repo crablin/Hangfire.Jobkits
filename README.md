@@ -43,6 +43,7 @@ GlobalConfiguration.Configuration
 
 - **AlwaysCollapsed** : job method is collapsed on pageload. (default: **false**)
 - **RequireConfirmation** : you must confirm after you launch job. (default: **false**)
+- **RecurringTimeZone** : recurring job cron timezone (local or UTC),default is local.
 
 ``` c#
 GlobalConfiguration.Configuration
@@ -50,6 +51,7 @@ GlobalConfiguration.Configuration
                 {
                     AlwaysCollapsed = true,
                     RequireConfirmation = true
+                    RecurringTimeZone = TimeZoneInfo.UTC
                 }, 
                 typeof(Startup).Assembly);
 ```

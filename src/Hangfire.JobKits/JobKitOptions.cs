@@ -1,4 +1,5 @@
-﻿using Hangfire.Annotations;
+﻿using System;
+using Hangfire.Annotations;
 
 namespace Hangfire.JobKits
 {
@@ -8,5 +9,7 @@ namespace Hangfire.JobKits
         public bool RequireConfirmation { get; set; }
 
         public bool AlwaysCollapsed { get; set; }
+
+        public TimeZoneInfo RecurringTimeZone { get; set; }
     }
 }
