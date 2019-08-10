@@ -106,8 +106,8 @@ public class MailJob
 public class ReportJob
 {
     [JobMethod("Process Report",
-               Description = "the report that save login user "
-               UseQueue)]
+               Description = "the report that save login user ",
+               UseQueue=true)]
     public void Process(DateTime start, DateTime end)
     {
         //code ... 
