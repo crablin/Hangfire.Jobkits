@@ -17,11 +17,11 @@
     <Copyright>MIT</Copyright>
     <Authors>Crab Lin</Authors>
     <Description>Fix resx bug</Description>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <PackageProjectUrl>https://github.com/crablin/Hangfire.Jobkits</PackageProjectUrl>
     <RepositoryUrl>https://github.com/crablin/Hangfire.Jobkits</RepositoryUrl>
-    <AssemblyVersion>1.1.5.0</AssemblyVersion>
-    <FileVersion>1.1.5.0</FileVersion>
+    <AssemblyVersion>1.1.6</AssemblyVersion>
+    <FileVersion>1.1.6</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,19 +44,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Dashboard\Contents\resx\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Dashboard\Contents\resx\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Hangfire.JobKits.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Compile Update="Dashboard\Contents\resx\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
