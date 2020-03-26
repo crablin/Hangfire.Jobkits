@@ -42,7 +42,15 @@ namespace Hangfire.JobKits.Dashboard.Controls.InputBox
             {
                 Type genericType = obj.GetType().GetGenericArguments()[0];
 
-                ((IList)obj).Add(Activator.CreateInstance(genericType));
+                if (genericType == typeof(string))
+                {
+                    ((IList)obj).Add(string.Empty);
+
+                }
+                else
+                {
+                    ((IList)obj).Add(Activator.CreateInstance(genericType));
+                }
             }
             else if (IsDictionary(obj))
             {
