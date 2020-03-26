@@ -51,6 +51,14 @@ namespace CoreSample.Jobs
             context.WriteLine($"Status: {status}");
             context.WriteLine("OK");
         }
+
+        [JobMethod(Name = "Send List String and Int")]
+        public void SendDictionary(PerformContext context, List<int> list, List<string> names)
+        {
+            context.WriteLine($"Count: {list.Count}");
+            context.WriteLine($"Names: {names.Count}");
+            context.WriteLine("OK");
+        }
     }
 
     public class MailModel
