@@ -11,6 +11,14 @@
             internal const string JsUrl = "/standby-content/js";
             internal const string CssUrl = "/standby-content/css";
         }
-        
+        internal struct Monitor
+        {
+            internal const string Url = "/monitor";
+            internal const string CategoryUrl = "/monitor/(?<categoryId>.+)";
+            internal const string LaunchUrl = "/monitor-launch/job";
+            internal const string LaunchRecurringUrl = "/monitor-launch/recurring";
+            internal const string JsUrl = "/monitor-content/js";
+            internal const string CssUrl = "/monitor-content/css";
+        }
     }
 }

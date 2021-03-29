@@ -17,47 +17,65 @@ namespace CoreSample.Jobs
         {
             _sendProgress = sendProgress;
         }
-
-        [JobMethod(UseQueue = true, RecurringJobId = "SendMail_E01")]
-        public void Send(PerformContext context)
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(UseQueue = true, RecurringJobId = "SendMail_E01", Name = "SendMail_E01")]
+        public bool Send(PerformContext context)
         {
             context.WriteLine("OK");
             context.WriteLine(_sendProgress.Send("Crab Good!!"));
             context.WriteLine("OK");
 
             context.WriteLine();
-        }
+            return true;
 
-        [JobMethod(Name = "Send Model")]
-        public void Send(PerformContext context, MailModel model)
+        }
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(Name = "Send Model", RecurringJobId = "SendModel_E01")]
+        public bool Send(PerformContext context, MailModel model)
         {
             context.WriteLine($"Subject: {model.Subject}");
             context.WriteLine($"Body: {model.Body}");
             context.WriteLine("OK");
-        }
+            return true;
 
-        [JobMethod(Name = "Send List")]
-        public void SendList(PerformContext context, List<MailModel> list, Status status)
+        }
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(Name = "xxxxxxxx Model", RecurringJobId = "xxxxxxxx")]
+        public bool xxxxxxxx(PerformContext context)
+        {
+            Console.WriteLine("1");
+            return false;
+
+        }
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(Name = "Send List", RecurringJobId = "SendDictionary_E01")]
+        public bool SendList(PerformContext context, List<MailModel> list, Status status)
         {
             context.WriteLine($"Count: {list.Count}");
             context.WriteLine($"Status: {status}");
             context.WriteLine("OK");
-        }
+            return true;
 
-        [JobMethod(Name = "Send Dictionary")]
-        public void SendDictionary(PerformContext context, Dictionary<int, MailModel> list, Status status)
+        }
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(Name = "Send Dictionary", RecurringJobId = "Send Dictionary")]
+        public bool SendDictionary(PerformContext context, Dictionary<int, MailModel> list, Status status)
         {
             context.WriteLine($"Count: {list.Count}");
             context.WriteLine($"Status: {status}");
             context.WriteLine("OK");
+            return false;
         }
 
-        [JobMethod(Name = "Send List String and Int")]
-        public void SendDictionary(PerformContext context, List<int> list, List<string> names)
+        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        [JobMethod(Name = "Send List String and Int", RecurringJobId = "SendList String and Int_E01")]
+        public bool SendDictionary(PerformContext context, List<int> list, List<string> names)
         {
             context.WriteLine($"Count: {list.Count}");
             context.WriteLine($"Names: {names.Count}");
             context.WriteLine("OK");
+            return true;
+
         }
     }
 
