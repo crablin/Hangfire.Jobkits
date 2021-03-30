@@ -123,8 +123,20 @@
   <data name="Button_Recurring" xml:space="preserve">
     <value>定時</value>
   </data>
+  <data name="Daily" xml:space="preserve">
+    <value>每日</value>
+  </data>
   <data name="Field_Missing" xml:space="preserve">
     <value>缺少欄位 : </value>
+  </data>
+  <data name="Monitor_All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Monitor_Title" xml:space="preserve">
+    <value>監視工作</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>每月</value>
   </data>
   <data name="Standby_Failure" xml:space="preserve">
     <value>建立時發生錯誤 : </value>
@@ -146,5 +158,8 @@
   </data>
   <data name="Standby_Title" xml:space="preserve">
     <value>待機工作</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>每週</value>
   </data>
 </root>

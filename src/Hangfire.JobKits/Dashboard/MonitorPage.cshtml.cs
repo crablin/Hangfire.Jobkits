@@ -89,57 +89,20 @@ WriteLiteral("\r\n");
             
             #line 12 "..\..\Dashboard\MonitorPage.cshtml"
   
+    Layout = new LayoutPage(Strings.Monitor_Title);
+
     string selectedCategory = this.SelectedCategory;
     MonitorMap jobMap = this.Map;
     JobKitOptions options = this.Options;
-    Layout = new LayoutPage("job-Monitor");
-    var availableJobs = jobMap.JobCollection.Where(x => x.Value.CategoryName == selectedCategory).Select(x => x.Value).ToArray();
-    MonitorJob[] jobCollections;
-    if (availableJobs.Count() == 0)
-    {
-        jobCollections = jobMap.JobCollection.Select(x => x.Value).ToArray();
-    }
-    else
-    {
-        jobCollections = availableJobs;
-    }
-    var dataList = new ConcurrentBag<JobDto>();
 
-    using (var connection = Storage.GetConnection())
-    {
-        var storageConnection = connection as JobStorageConnection;
-        if (storageConnection != null)
-        {
-            //Parallel.ForEach(jobCollections, o =>
-            //{
-            //    var job = storageConnection.GetAllEntriesFromHash($"recurring-Monitor:{o.RecurringJobId}");
-            //    dataList.Add(new JobDto
-            //    {
-            //        RecurringJobId = o.RecurringJobId,
-            //        JobName = o.Name,
-            //        ExecutionStatus = job["LastExecutionStatus"],
-            //        ExecutionTime = job["LastExecutionTime"],
-            //        ValidationStatus = job["ValidationStatus"],
-            //        ValidationTime = job["ValidationDateTime"]
-            //    });
-            //});
-            foreach (var item in jobCollections)
-            {
-                var job = storageConnection.GetAllEntriesFromHash($"recurring-Monitor:{item.RecurringJobId}");
-                dataList.Add(new JobDto
-                {
-                    Id=job["LastExecutionJobId"]==""?"尚未執行與驗證":"#"+job["LastExecutionJobId"],
-                    RecurringJobId = item.RecurringJobId,
-                    JobName = item.Name,
-                    ExecutionStatus = job["LastExecutionStatus"]=="False"?"執行失敗":"執行成功",
-                    ExecutionTime = job["LastExecutionTime"] ?? "尚未執行",
-                    ValidationStatus = job["ValidationStatus"] == "False" ? "驗證失敗" : "驗證成功",
-                    ValidationTime = job["ValidationDateTime"] ?? "尚未驗證",
-                    HrefString= job["LastExecutionJobId"] == ""?"": $"/jobs/details/{job["LastExecutionJobId"]}",
-                });
-            }
-        }
-    }
+    var availableJobs = jobMap.JobCollection.ContainsKey(selectedCategory)
+        ? jobMap.JobCollection[selectedCategory]
+        : new List<MonitorJob>();
+
+    var format = selectedCategory == "Daily"
+        ? "HH:mm" : "MM-dd HH:mm";
+
+
 
 
             
@@ -149,7 +112,7 @@ WriteLiteral("\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"");
 
 
             
-            #line 66 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 29 "..\..\Dashboard\MonitorPage.cshtml"
                                         Write(Url.To(JobKitRoute.Monitor.CssUrl));
 
             
@@ -159,7 +122,7 @@ WriteLiteral("\" />\r\n<script type=\"text/javascript\">\r\n    var launchUrl = 
 
 
             
-            #line 68 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 31 "..\..\Dashboard\MonitorPage.cshtml"
                 Write(Url.To(JobKitRoute.Monitor.LaunchUrl));
 
             
@@ -169,18 +132,8 @@ WriteLiteral("\';\r\n    var recurringUrl = \'");
 
 
             
-            #line 69 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 32 "..\..\Dashboard\MonitorPage.cshtml"
                    Write(Url.To(JobKitRoute.Monitor.LaunchRecurringUrl));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\';\r\n    var idFieldName = \'");
-
-
-            
-            #line 70 "..\..\Dashboard\MonitorPage.cshtml"
-                  Write(StandbyKey.IdField);
 
             
             #line default
@@ -189,78 +142,18 @@ WriteLiteral("\';\r\n    var jobLinkBaseUrl = \'");
 
 
             
-            #line 71 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 33 "..\..\Dashboard\MonitorPage.cshtml"
                      Write(Url.JobDetails(""));
 
             
             #line default
             #line hidden
-WriteLiteral("\';\r\n    var requireConfirmation = ");
+WriteLiteral("\';\r\n    \r\n</script>\r\n<script type=\"text/javascript\" src=\"");
 
 
             
-            #line 72 "..\..\Dashboard\MonitorPage.cshtml"
-                         Write(options.RequireConfirmation.ToString().ToLowerInvariant());
-
-            
-            #line default
-            #line hidden
-WriteLiteral(";\r\n    var messageLaunch = {\r\n        confirm: \'");
-
-
-            
-            #line 74 "..\..\Dashboard\MonitorPage.cshtml"
-             Write(Strings.Standby_Launch);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\',\r\n        confirmRecurring: \'");
-
-
-            
-            #line 75 "..\..\Dashboard\MonitorPage.cshtml"
-                      Write(Strings.Standby_LaunchRecurring);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\',\r\n        success: \'");
-
-
-            
-            #line 76 "..\..\Dashboard\MonitorPage.cshtml"
-             Write(Strings.Standby_Success);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\',\r\n        successRecurring: \'");
-
-
-            
-            #line 77 "..\..\Dashboard\MonitorPage.cshtml"
-                      Write(Strings.Standby_SuccessRecurring);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\',\r\n        failure: \'");
-
-
-            
-            #line 78 "..\..\Dashboard\MonitorPage.cshtml"
-             Write(Strings.Standby_Failure);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\'\r\n    };\r\n</script>\r\n<script type=\"text/javascript\" src=\"");
-
-
-            
-            #line 81 "..\..\Dashboard\MonitorPage.cshtml"
-                               Write(Url.To(JobKitRoute.Standby.JsUrl));
+            #line 36 "..\..\Dashboard\MonitorPage.cshtml"
+                               Write(Url.To(JobKitRoute.Monitor.JsUrl));
 
             
             #line default
@@ -269,7 +162,7 @@ WriteLiteral("\"></script>\r\n\r\n<div class=\"row\">\r\n    <div class=\"col-md
 
 
             
-            #line 85 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 40 "..\..\Dashboard\MonitorPage.cshtml"
    Write(SidebarControlFromMonitor.Render(Html, selectedCategory, jobMap));
 
             
@@ -279,168 +172,117 @@ WriteLiteral("\r\n    </div>\r\n    <h1 class=\"page-header\">");
 
 
             
-            #line 87 "..\..\Dashboard\MonitorPage.cshtml"
-                       Write(selectedCategory);
+            #line 42 "..\..\Dashboard\MonitorPage.cshtml"
+                        Write(Strings.Monitor_Title);
 
             
             #line default
             #line hidden
 WriteLiteral(@"</h1>
     <div class=""col-md-9"">
-        <table class=""table"">
-            <thead>
-                <tr>
-                    <th>排程編號</th>
-                    <th>排程名稱</th>
-                    <th> 執行時間 </th>
-                    <th> 執行狀態</th>
-                    <th> 驗證時間 </th>
-                    <th> 驗證狀況</th>
-                    <th> 執行明細</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class=""table-responsive"">
+            <table class=""table"">
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th class=""min-width"">Cron</th>
+                        <th>工作</th>
+                        <th class=""align-right min-width"">監控時間</th>
+                        <th class=""align-right min-width"">執行時間</th>
+                        <th class=""align-right min-width"">執行狀態</th>
+                        <th class=""min-width""></th>
+                    </tr>
+                </thead>
+                <tbody>
 ");
 
 
             
-            #line 102 "..\..\Dashboard\MonitorPage.cshtml"
-                 foreach (var job in dataList.OrderByDescending(o => o.ExecutionTime))
-                {
+            #line 58 "..\..\Dashboard\MonitorPage.cshtml"
+                     foreach (var job in availableJobs.OrderBy(x => x.MonitorTime))
+                    {
+                        var jobStatus = job.GetStatus(Storage);
+
 
             
             #line default
             #line hidden
-WriteLiteral("                <tr class=\"js-jobs-list-row hover\">\r\n                    <td clas" +
-"s=\"word-break width-15\">");
+WriteLiteral("                        <tr class=\"js-jobs-list-row hover\">\r\n                    " +
+"        <td class=\"word-break width-15\">");
 
 
             
-            #line 105 "..\..\Dashboard\MonitorPage.cshtml"
-                                               Write(job.RecurringJobId);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</td>\r\n                    <td class=\"word-break width-15\">");
-
-
-            
-            #line 106 "..\..\Dashboard\MonitorPage.cshtml"
-                                               Write(job.JobName);
+            #line 63 "..\..\Dashboard\MonitorPage.cshtml"
+                                                       Write(job.Name);
 
             
             #line default
             #line hidden
-WriteLiteral("</td>\r\n                    <td class=\"align-right min-width\">");
+WriteLiteral("</td>\r\n                            <td class=\"word-break width-15\"><code>");
 
 
             
-            #line 107 "..\..\Dashboard\MonitorPage.cshtml"
-                                                 Write(job.ExecutionTime);
-
-            
-            #line default
-            #line hidden
-WriteLiteral(" </td>\r\n                    <td class=\"align-right min-width\">");
-
-
-            
-            #line 108 "..\..\Dashboard\MonitorPage.cshtml"
-                                                 Write(job.ExecutionStatus);
+            #line 64 "..\..\Dashboard\MonitorPage.cshtml"
+                                                             Write(job.Cron);
 
             
             #line default
             #line hidden
-WriteLiteral("  </td>\r\n                    <td class=\"align-right min-width\">");
+WriteLiteral("</code></td>\r\n                            <td class=\"align-right min-width\">");
 
 
             
-            #line 109 "..\..\Dashboard\MonitorPage.cshtml"
-                                                 Write(job.ValidationTime);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("  </td>\r\n                    <td class=\"align-right min-width\">");
-
-
-            
-            #line 110 "..\..\Dashboard\MonitorPage.cshtml"
-                                                 Write(job.ValidationStatus);
+            #line 65 "..\..\Dashboard\MonitorPage.cshtml"
+                                                         Write(job.ActionName);
 
             
             #line default
             #line hidden
-WriteLiteral("  </td>\r\n                    <td class=\"min-width\">\r\n");
+WriteLiteral(" </td>\r\n                            <td class=\"align-right min-width\">");
 
 
             
-            #line 112 "..\..\Dashboard\MonitorPage.cshtml"
-                         if (string.IsNullOrEmpty(job.HrefString))
-                        {
-                            
-            
-            #line default
-            #line hidden
-            
-            #line 114 "..\..\Dashboard\MonitorPage.cshtml"
-                       Write(job.Id);
+            #line 66 "..\..\Dashboard\MonitorPage.cshtml"
+                                                         Write(job.MonitorTime.ToLocalTime().ToString(format));
 
             
             #line default
             #line hidden
-            
-            #line 114 "..\..\Dashboard\MonitorPage.cshtml"
-                                   
-                        }
-                        else
-                        {
-
-            
-            #line default
-            #line hidden
-WriteLiteral("                            <a href=");
+WriteLiteral("  </td>\r\n                            <td class=\"align-right min-width\">");
 
 
             
-            #line 118 "..\..\Dashboard\MonitorPage.cshtml"
-                               Write(job.HrefString);
+            #line 67 "..\..\Dashboard\MonitorPage.cshtml"
+                                                          Write(jobStatus.ExecutedTime.HasValue ? jobStatus.ExecutedTime.Value.ToLocalTime().ToString(format) : "-" );
 
             
             #line default
             #line hidden
-WriteLiteral(">");
+WriteLiteral("</td>\r\n                            <td class=\"align-right min-width\">\r\n          " +
+"                      <label class=\"label label-default\">");
 
 
             
-            #line 118 "..\..\Dashboard\MonitorPage.cshtml"
-                                               Write(job.Id);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</a>\r\n");
-
-
-            
-            #line 119 "..\..\Dashboard\MonitorPage.cshtml"
-                        }
+            #line 69 "..\..\Dashboard\MonitorPage.cshtml"
+                                                               Write(jobStatus.Status.ToString());
 
             
             #line default
             #line hidden
-WriteLiteral("                    </td>\r\n                </tr>\r\n");
+WriteLiteral("</label>\r\n                            </td>\r\n                            <td clas" +
+"s=\"min-width\">\r\n                                \r\n                            </" +
+"td>\r\n                        </tr>\r\n");
 
 
             
-            #line 122 "..\..\Dashboard\MonitorPage.cshtml"
-                }
+            #line 75 "..\..\Dashboard\MonitorPage.cshtml"
+                    }
 
             
             #line default
             #line hidden
-WriteLiteral("            </tbody>\r\n        </table>\r\n    </div>\r\n</div>\r\n");
+WriteLiteral("                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div" +
+">\r\n");
 
 
         }

@@ -1,9 +1,4 @@
-﻿using Hangfire.Common;
-using Hangfire.JobKits.Worker;
-using Hangfire.Storage.Monitoring;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Hangfire.JobKits.Worker;
 
 namespace Hangfire.JobKits.Dashboard
 {
@@ -28,5 +23,6 @@ namespace Hangfire.JobKits.Dashboard
             Map = map;
             Options = options;
         }
+
     }
 }

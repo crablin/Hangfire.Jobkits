@@ -79,11 +79,47 @@ namespace Hangfire.JobKits.Resources {
         }
         
         /// <summary>
+        ///   查詢類似 Daily 的當地語系化字串。
+        /// </summary>
+        public static string Daily {
+            get {
+                return ResourceManager.GetString("Daily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Fields are missing: 的當地語系化字串。
         /// </summary>
         public static string Field_Missing {
             get {
                 return ResourceManager.GetString("Field_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 All 的當地語系化字串。
+        /// </summary>
+        public static string Monitor_All {
+            get {
+                return ResourceManager.GetString("Monitor_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Job Monitor 的當地語系化字串。
+        /// </summary>
+        public static string Monitor_Title {
+            get {
+                return ResourceManager.GetString("Monitor_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Monthly 的當地語系化字串。
+        /// </summary>
+        public static string Monthly {
+            get {
+                return ResourceManager.GetString("Monthly", resourceCulture);
             }
         }
         
@@ -147,6 +183,15 @@ namespace Hangfire.JobKits.Resources {
         public static string Standby_Title {
             get {
                 return ResourceManager.GetString("Standby_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Weekly 的當地語系化字串。
+        /// </summary>
+        public static string Weekly {
+            get {
+                return ResourceManager.GetString("Weekly", resourceCulture);
             }
         }
     }

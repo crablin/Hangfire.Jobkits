@@ -1,43 +1,102 @@
-﻿using Hangfire.Common;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
-
 namespace Hangfire.JobKits.Worker
 {
+    public enum MonitorJobStatus
+    {
+        Successed,
+        Failed,
+        Invalid,
+        Unqueued,
+        Wait
+    }
+
+    public class MonitorJobStatusDto
+    {
+        public MonitorJobStatusDto()
+        {
+        }
+
+        public MonitorJobStatusDto(MonitorJobStatus status)
+        {
+            Status = status;
+        }
+
+        public MonitorJobStatus Status { get; set; }
+        public DateTime? ExecutedTime { get; set; }
+        public string ExecutedJobId { get; set; }
+    }
+
     public class MonitorJob
     {
         public string Id { get; }
-        public string CategoryName { get; }
+        public string Cron { get; }
+        public DateTime MonitorTime { get; }
+        public DateTime NextTime { get; }
+        public string Range { get; set; }
         public string Name { get; }
-        public string Description { get; }
-        public bool UseQueue { get; }
-        public string RecurringJobId { get; }
-        public string RecurringJobCron { get; }
         public MethodInfo Method { get; }
         public string ActionName { get; }
 
+        public MonitorJobStatusDto GetStatus(JobStorage storage)
+        {
+            if (MonitorTime <= DateTime.Now)
+                return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+
+            var key = $"monitor-job:{MonitorTime.Date.Ticks}:{ActionName}";
+
+            using (var connection = storage.GetConnection())
+            {
+                var source = connection.GetAllEntriesFromHash(key);
+
+                if (source == null) return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+
+                var startTick = MonitorTime.Ticks.ToString();
+                var endTick = NextTime.Ticks.ToString();
+                var lastKey = source.Keys.OrderBy(k => k)
+                    .LastOrDefault(k => string.Compare(k, startTick) >= 0 && string.Compare(k, endTick) == -1);
+
+                if (string.IsNullOrEmpty(lastKey) && NextTime < DateTime.Now)
+                {
+                    return new MonitorJobStatusDto(MonitorJobStatus.Unqueued);
+                }
+                else if (!string.IsNullOrEmpty(lastKey))
+                {
+                    var result = source[lastKey].Split(';');
+
+                    return new MonitorJobStatusDto
+                    {
+                        Status = (MonitorJobStatus)Enum.Parse(typeof(MonitorJobStatus), result[0]),
+                        ExecutedTime = new DateTime(long.Parse(result[1])),
+                        ExecutedJobId = result[2]
+                    };
+                }
+            }
+            return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+        }
 
         public MonitorJob(
-            JobLauncherAttribute launcherAttribute,
-            JobMethodAttribute methodAttribute,
-            MethodInfo method)
+            JobValidationAttribute vaildateAttribute,
+            MethodInfo method,
+            DateTime monitorTime,
+            DateTime nextTime
+            )
         {
             Id = GenerateId(method);
-            CategoryName = launcherAttribute.CategoryName ?? method.DeclaringType?.Name ?? "Default";
 
-            Name = methodAttribute.Name;
-            Description = methodAttribute.Description;
-            UseQueue = methodAttribute.UseQueue;
-
-            RecurringJobId = methodAttribute.RecurringJobId;
-            RecurringJobCron = methodAttribute.RecurringJobCron ?? "0/30 * * * *";
+            Name = vaildateAttribute.Name;
+            Cron = vaildateAttribute.Cron;
+            Range = vaildateAttribute.Range;
 
             Method = method;
-
             ActionName = $"{method.DeclaringType.Name}.{method.Name}";
+
+            MonitorTime = monitorTime;
+            NextTime = nextTime;
         }
 
         private static string GenerateId(MethodInfo method)

@@ -123,8 +123,20 @@
   <data name="Button_Recurring" xml:space="preserve">
     <value>Recurring</value>
   </data>
+  <data name="Daily" xml:space="preserve">
+    <value>Daily</value>
+  </data>
   <data name="Field_Missing" xml:space="preserve">
     <value>Fields are missing:</value>
+  </data>
+  <data name="Monitor_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Monitor_Title" xml:space="preserve">
+    <value>Job Monitor</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Monthly</value>
   </data>
   <data name="Standby_Failure" xml:space="preserve">
     <value>An error occured during launching: </value>
@@ -146,5 +158,8 @@
   </data>
   <data name="Standby_Title" xml:space="preserve">
     <value>Standby Jobs</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Weekly</value>
   </data>
 </root>

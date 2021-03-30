@@ -10,117 +10,71 @@
 @inherits Hangfire.Dashboard.RazorPage
 
 @{
+    Layout = new LayoutPage(Strings.Monitor_Title);
+
     string selectedCategory = this.SelectedCategory;
     MonitorMap jobMap = this.Map;
     JobKitOptions options = this.Options;
-    Layout = new LayoutPage("job-Monitor");
-    var availableJobs = jobMap.JobCollection.Where(x => x.Value.CategoryName == selectedCategory).Select(x => x.Value).ToArray();
-    MonitorJob[] jobCollections;
-    if (availableJobs.Count() == 0)
-    {
-        jobCollections = jobMap.JobCollection.Select(x => x.Value).ToArray();
-    }
-    else
-    {
-        jobCollections = availableJobs;
-    }
-    var dataList = new ConcurrentBag<JobDto>();
 
-    using (var connection = Storage.GetConnection())
-    {
-        var storageConnection = connection as JobStorageConnection;
-        if (storageConnection != null)
-        {
-            //Parallel.ForEach(jobCollections, o =>
-            //{
-            //    var job = storageConnection.GetAllEntriesFromHash($"recurring-Monitor:{o.RecurringJobId}");
-            //    dataList.Add(new JobDto
-            //    {
-            //        RecurringJobId = o.RecurringJobId,
-            //        JobName = o.Name,
-            //        ExecutionStatus = job["LastExecutionStatus"],
-            //        ExecutionTime = job["LastExecutionTime"],
-            //        ValidationStatus = job["ValidationStatus"],
-            //        ValidationTime = job["ValidationDateTime"]
-            //    });
-            //});
-            foreach (var item in jobCollections)
-            {
-                var job = storageConnection.GetAllEntriesFromHash($"recurring-Monitor:{item.RecurringJobId}");
-                dataList.Add(new JobDto
-                {
-                    Id=job["LastExecutionJobId"]==""?"尚未執行與驗證":"#"+job["LastExecutionJobId"],
-                    RecurringJobId = item.RecurringJobId,
-                    JobName = item.Name,
-                    ExecutionStatus = job["LastExecutionStatus"]=="False"?"執行失敗":"執行成功",
-                    ExecutionTime = job["LastExecutionTime"] ?? "尚未執行",
-                    ValidationStatus = job["ValidationStatus"] == "False" ? "驗證失敗" : "驗證成功",
-                    ValidationTime = job["ValidationDateTime"] ?? "尚未驗證",
-                    HrefString= job["LastExecutionJobId"] == ""?"": $"/jobs/details/{job["LastExecutionJobId"]}",
-                });
-            }
-        }
-    }
+    var availableJobs = jobMap.JobCollection.ContainsKey(selectedCategory)
+        ? jobMap.JobCollection[selectedCategory]
+        : new List<MonitorJob>();
+
+    var format = selectedCategory == "Daily"
+        ? "HH:mm" : "MM-dd HH:mm";
+
+
 }
 
 <link rel="stylesheet" type="text/css" href="@Url.To(JobKitRoute.Monitor.CssUrl)" />
 <script type="text/javascript">
     var launchUrl = '@Url.To(JobKitRoute.Monitor.LaunchUrl)';
     var recurringUrl = '@Url.To(JobKitRoute.Monitor.LaunchRecurringUrl)';
-    var idFieldName = '@StandbyKey.IdField';
     var jobLinkBaseUrl = '@Url.JobDetails("")';
-    var requireConfirmation = @options.RequireConfirmation.ToString().ToLowerInvariant();
-    var messageLaunch = {
-        confirm: '@Strings.Standby_Launch',
-        confirmRecurring: '@Strings.Standby_LaunchRecurring',
-        success: '@Strings.Standby_Success',
-        successRecurring: '@Strings.Standby_SuccessRecurring',
-        failure: '@Strings.Standby_Failure'
-    };
+    
 </script>
-<script type="text/javascript" src="@Url.To(JobKitRoute.Standby.JsUrl)"></script>
+<script type="text/javascript" src="@Url.To(JobKitRoute.Monitor.JsUrl)"></script>
 
 <div class="row">
     <div class="col-md-3">
         @SidebarControlFromMonitor.Render(Html, selectedCategory, jobMap)
     </div>
-    <h1 class="page-header">@selectedCategory</h1>
+    <h1 class="page-header">@(Strings.Monitor_Title)</h1>
     <div class="col-md-9">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>排程編號</th>
-                    <th>排程名稱</th>
-                    <th> 執行時間 </th>
-                    <th> 執行狀態</th>
-                    <th> 驗證時間 </th>
-                    <th> 驗證狀況</th>
-                    <th> 執行明細</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var job in dataList.OrderByDescending(o => o.ExecutionTime))
-                {
-                <tr class="js-jobs-list-row hover">
-                    <td class="word-break width-15">@job.RecurringJobId</td>
-                    <td class="word-break width-15">@job.JobName</td>
-                    <td class="align-right min-width">@job.ExecutionTime </td>
-                    <td class="align-right min-width">@job.ExecutionStatus  </td>
-                    <td class="align-right min-width">@job.ValidationTime  </td>
-                    <td class="align-right min-width">@job.ValidationStatus  </td>
-                    <td class="min-width">
-                        @if (string.IsNullOrEmpty(job.HrefString))
-                        {
-                            @job.Id
-                        }
-                        else
-                        {
-                            <a href=@job.HrefString>@job.Id</a>
-                        }
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th class="min-width">Cron</th>
+                        <th>工作</th>
+                        <th class="align-right min-width">監控時間</th>
+                        <th class="align-right min-width">執行時間</th>
+                        <th class="align-right min-width">執行狀態</th>
+                        <th class="min-width"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in availableJobs.OrderBy(x => x.MonitorTime))
+                    {
+                        var jobStatus = job.GetStatus(Storage);
+
+                        <tr class="js-jobs-list-row hover">
+                            <td class="word-break width-15">@job.Name</td>
+                            <td class="word-break width-15"><code>@job.Cron</code></td>
+                            <td class="align-right min-width">@job.ActionName </td>
+                            <td class="align-right min-width">@job.MonitorTime.ToLocalTime().ToString(format)  </td>
+                            <td class="align-right min-width">@(jobStatus.ExecutedTime.HasValue ? jobStatus.ExecutedTime.Value.ToLocalTime().ToString(format) : "-" )</td>
+                            <td class="align-right min-width">
+                                <label class="label label-default">@(jobStatus.Status.ToString())</label>
+                            </td>
+                            <td class="min-width">
+                                
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

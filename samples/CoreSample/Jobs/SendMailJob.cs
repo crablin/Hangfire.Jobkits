@@ -17,7 +17,7 @@ namespace CoreSample.Jobs
         {
             _sendProgress = sendProgress;
         }
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(UseQueue = true, RecurringJobId = "SendMail_E01", Name = "SendMail_E01")]
         public bool Send(PerformContext context)
         {
@@ -29,7 +29,7 @@ namespace CoreSample.Jobs
             return true;
 
         }
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(Name = "Send Model", RecurringJobId = "SendModel_E01")]
         public bool Send(PerformContext context, MailModel model)
         {
@@ -39,7 +39,7 @@ namespace CoreSample.Jobs
             return true;
 
         }
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(Name = "xxxxxxxx Model", RecurringJobId = "xxxxxxxx")]
         public bool xxxxxxxx(PerformContext context)
         {
@@ -47,7 +47,7 @@ namespace CoreSample.Jobs
             return false;
 
         }
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(Name = "Send List", RecurringJobId = "SendDictionary_E01")]
         public bool SendList(PerformContext context, List<MailModel> list, Status status)
         {
@@ -57,7 +57,7 @@ namespace CoreSample.Jobs
             return true;
 
         }
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(Name = "Send Dictionary", RecurringJobId = "Send Dictionary")]
         public bool SendDictionary(PerformContext context, Dictionary<int, MailModel> list, Status status)
         {
@@ -67,7 +67,7 @@ namespace CoreSample.Jobs
             return false;
         }
 
-        [JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
+        //[JobValidation(StartHour = 8, StartMinute = 10, EndHour = 20, EndMinute = 10)]
         [JobMethod(Name = "Send List String and Int", RecurringJobId = "SendList String and Int_E01")]
         public bool SendDictionary(PerformContext context, List<int> list, List<string> names)
         {

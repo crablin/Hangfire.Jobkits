@@ -1,77 +1,76 @@
-﻿using Hangfire.Client;
-using Hangfire.Common;
-using Hangfire.Server;
-using Hangfire.States;
-using Hangfire.Storage;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Hangfire.JobKits.DataBase;
 using Hangfire.Annotations;
+using Hangfire.JobKits.Providers;
+using Hangfire.JobKits.Worker;
+using Hangfire.States;
 
 namespace Hangfire.JobKits
 {
+    public struct ValidateRangeType
+    {
+        public const string Daily = "Daily";
+        public const string Weekly = "Weekly";
+        public const string Monthly = "Monthly";
+    }
+
     [PublicAPI]
     [AttributeUsage(AttributeTargets.Method)]
-    public class JobValidationAttribute : JobFilterAttribute, IClientFilter, IServerFilter, IElectStateFilter, IApplyStateFilter
+    public class JobValidationAttribute : TypeJobFilterAttribute
     {
-        private PerformedContext filterContext;
-        public int StartHour { get; set; }
-        public int StartMinute { get; set; }
-        public int EndHour { get; set; }
-        public int EndMinute { get; set; }
-        public void OnStateUnapplied(ApplyStateContext context, IWriteOnlyTransaction transaction)
+        public string Name { get; set; }
+        public string Cron { get; set; }
+        public string Range { get; set; } = ValidateRangeType.Daily;
+
+        public JobValidationAttribute()
+            : this(typeof(JobValidationStateFilter))
         {
-            if (context.NewState.Name == "Succeeded")
-            {
-                var recurringJobId = context.Job.Method.CustomAttributes.FirstOrDefault(o => o.AttributeType.Name == "JobMethodAttribute").NamedArguments.ToList().Where(x => x.MemberName == "RecurringJobId").First().TypedValue;
-
-                var job = new Dictionary<string, string>
-                         {
-                            {"LastExecutionStatus",true.ToString() },
-                            {"LastExecutionTime",DateTime.UtcNow.ToLocalTime().ToString() },
-                            {"LastExecutionJobId",context.JobId }
-
-                         };
-                Update(recurringJobId.Value.ToString(), job, context);
-                ValidationJob(recurringJobId.Value.ToString(), context);
-            }
         }
-        public void ValidationJob(string recurringJobId, ApplyStateContext context)
+
+        public JobValidationAttribute(Type typeFilter) : base(typeFilter)
         {
-            var today = DateTime.Today;
-            var year = today.Year;
-            var month = today.Month;
-            var day = today.Day;
-            var ExcuteStartTime = DateTime.Parse(year + "-" + month + "-" + day + $" {StartHour}:{StartMinute}:00").ToUniversalTime();
-            var ExcuteEndTime = DateTime.Parse(year + "-" + month + "-" + day + $" {EndHour}:{EndMinute}:59").ToUniversalTime();
-            bool IsValidation = false;
-            if (DateTime.UtcNow >= ExcuteStartTime && DateTime.UtcNow <= ExcuteEndTime)
+        }
+
+        public class JobValidationStateFilter : IElectStateFilter
+        {
+            private object _lockFlag = new object();
+
+            public virtual bool Validate() => true;
+
+            void IElectStateFilter.OnStateElection(ElectStateContext context)
             {
-                if (GlobalJobValidations.Validation.Validation(recurringJobId, filterContext))
+                if (context.CandidateState is SucceededState succeededstate)
                 {
-                    var job = new Dictionary<string, string>
-                         {
-                            { "ValidationDateTime",DateTime.UtcNow.ToLocalTime().ToString()},
-                            { "ValidationStatus", true.ToString() }
-                         };
-                    Update(recurringJobId, job, context);
+                    var isValid = Validate();
+
+                    SetState(context, isValid ? MonitorJobStatus.Successed : MonitorJobStatus.Invalid);
+                }
+                else if (context.CandidateState is FailedState state)
+                {
+                    SetState(context, MonitorJobStatus.Failed);
                 }
             }
-        }
-        private void Update(string recurringJobId, Dictionary<string, string> jobs, ApplyStateContext context)
-        {
-            var storage = context.Storage;
-            using (var conn = storage.GetConnection())
+
+            private void SetState(ElectStateContext context, MonitorJobStatus jobStatus)
             {
-                conn.SetRangeInHash($"recurring-Monitor:{recurringJobId}", jobs);
+                var method = context.BackgroundJob.Job.Method;
+                var key = $"monitor-job:{DateTime.Now.Date.Ticks}:{method.DeclaringType.FullName}.{method.Name}";
+
+                lock (_lockFlag)
+                {
+                    var source = context.Connection.GetAllEntriesFromHash(key);
+
+                    if (source == null)
+                        source = new Dictionary<string, string>();
+
+                    source.Add(
+                        DateTime.Now.Ticks.ToString(),
+                        $"{jobStatus};{DateTime.Now.Ticks};{context.BackgroundJob.Id}");
+
+                    context.Connection.SetRangeInHash(key, source);
+                }
+
             }
         }
-        public void OnCreated(CreatedContext filterContext) { }
-        public void OnCreating(CreatingContext filterContext) { }
-        public void OnPerformed(PerformedContext filterContext) { this.filterContext = filterContext; }
-        public void OnPerforming(PerformingContext filterContext) { }
-        public void OnStateApplied(ApplyStateContext context, IWriteOnlyTransaction transaction) { }
-        public void OnStateElection(ElectStateContext context) { }
     }
 }
