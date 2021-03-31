@@ -151,6 +151,51 @@ namespace Hangfire.JobKits.Resources {
         }
         
         /// <summary>
+        ///   查詢類似 Failed 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Failed {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Invalid 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Invalid {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Successed 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Successed {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Successed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Unexecuted 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Unexecuted {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Unexecuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Unstarted 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Unstarted {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Unstarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Daily 的當地語系化字串。
         /// </summary>
         public static string Range_Daily {

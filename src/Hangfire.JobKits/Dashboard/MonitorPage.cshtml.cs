@@ -255,65 +255,115 @@ WriteLiteral("</td>\r\n                            <td class=\"align-right min-w
 
             
             #line 62 "..\..\Dashboard\MonitorPage.cshtml"
-                                 if (!string.IsNullOrEmpty(jobStatus.ExecutedJobId))
+                                 switch (jobStatus.Status)
                                 {
-                                    var color = jobStatus.Status == MonitorJobStatus.Successed
-                                        ? "#198754" : jobStatus.Status == MonitorJobStatus.Failed ? "#dc3545"
-                                        : "#ffc107";
-
+                                    case MonitorJobStatus.Successed:
 
             
             #line default
             #line hidden
-WriteLiteral("                                    <a href=\"");
+WriteLiteral("                                        <a href=\"");
+
+
+            
+            #line 65 "..\..\Dashboard\MonitorPage.cshtml"
+                                             Write(Url.JobDetails(jobStatus.ExecutedJobId));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">\r\n                                            <span class=\"badge\" style=\"backgr" +
+"ound-color:#198754;\">");
+
+
+            
+            #line 66 "..\..\Dashboard\MonitorPage.cshtml"
+                                                                                              Write(Strings.MonitorStatus_Successed);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</span>\r\n                                        </a>\r\n");
 
 
             
             #line 68 "..\..\Dashboard\MonitorPage.cshtml"
-                                         Write(Url.JobDetails(jobStatus.ExecutedJobId));
+                                        break;
+                                    case MonitorJobStatus.Failed:
 
             
             #line default
             #line hidden
-WriteLiteral("\">\r\n                                        <span class=\"badge\" style=\"background" +
-"-color:");
+WriteLiteral("                                        <a href=\"");
 
 
             
-            #line 69 "..\..\Dashboard\MonitorPage.cshtml"
-                                                                                Write(color);
-
-            
-            #line default
-            #line hidden
-WriteLiteral(";\">");
-
-
-            
-            #line 69 "..\..\Dashboard\MonitorPage.cshtml"
-                                                                                           Write(jobStatus.Status.ToString());
+            #line 70 "..\..\Dashboard\MonitorPage.cshtml"
+                                             Write(Url.JobDetails(jobStatus.ExecutedJobId));
 
             
             #line default
             #line hidden
-WriteLiteral("</span>\r\n</a>\r\n");
+WriteLiteral("\">\r\n                                            <span class=\"badge\" style=\"backgr" +
+"ound-color:#dc3545;\">");
 
 
             
             #line 71 "..\..\Dashboard\MonitorPage.cshtml"
-                                }
-                                else
-                                {
+                                                                                              Write(Strings.MonitorStatus_Failed);
 
             
             #line default
             #line hidden
-WriteLiteral("                                    <span class=\"badge\">");
+WriteLiteral("</span>\r\n                                        </a>\r\n");
 
 
             
-            #line 74 "..\..\Dashboard\MonitorPage.cshtml"
-                                                    Write(jobStatus.Status.ToString());
+            #line 73 "..\..\Dashboard\MonitorPage.cshtml"
+                                        break;
+                                    case MonitorJobStatus.Invalid:
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                                        <a href=\"");
+
+
+            
+            #line 75 "..\..\Dashboard\MonitorPage.cshtml"
+                                             Write(Url.JobDetails(jobStatus.ExecutedJobId));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">\r\n                                            <span class=\"badge\" style=\"backgr" +
+"ound-color:#ffc107;color:#000000\">");
+
+
+            
+            #line 76 "..\..\Dashboard\MonitorPage.cshtml"
+                                                                                                           Write(Strings.MonitorStatus_Invalid);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</span>\r\n                                        </a>\r\n");
+
+
+            
+            #line 78 "..\..\Dashboard\MonitorPage.cshtml"
+                                        break;
+                                    case MonitorJobStatus.Unexecuted:
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                                        <span class=\"badge\">");
+
+
+            
+            #line 80 "..\..\Dashboard\MonitorPage.cshtml"
+                                                        Write(Strings.MonitorStatus_Unexecuted);
 
             
             #line default
@@ -322,7 +372,24 @@ WriteLiteral("</span>\r\n");
 
 
             
-            #line 75 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 81 "..\..\Dashboard\MonitorPage.cshtml"
+                                        break;
+                                    default:
+                                        
+            
+            #line default
+            #line hidden
+            
+            #line 83 "..\..\Dashboard\MonitorPage.cshtml"
+                                    Write("-");
+
+            
+            #line default
+            #line hidden
+            
+            #line 83 "..\..\Dashboard\MonitorPage.cshtml"
+                                              
+                                        break;
                                 }
 
             
@@ -332,7 +399,7 @@ WriteLiteral("\r\n                            </td>\r\n                        <
 
 
             
-            #line 79 "..\..\Dashboard\MonitorPage.cshtml"
+            #line 89 "..\..\Dashboard\MonitorPage.cshtml"
                     }
 
             

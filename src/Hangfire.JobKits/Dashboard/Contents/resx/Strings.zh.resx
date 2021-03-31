@@ -147,6 +147,21 @@
   <data name="MonitorPage_Title" xml:space="preserve">
     <value>监视作业</value>
   </data>
+  <data name="MonitorStatus_Failed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="MonitorStatus_Invalid" xml:space="preserve">
+    <value>验证失败</value>
+  </data>
+  <data name="MonitorStatus_Successed" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="MonitorStatus_Unexecuted" xml:space="preserve">
+    <value>未运行</value>
+  </data>
+  <data name="MonitorStatus_Unstarted" xml:space="preserve">
+    <value>未开始</value>
+  </data>
   <data name="Range_Daily" xml:space="preserve">
     <value>当日</value>
   </data>

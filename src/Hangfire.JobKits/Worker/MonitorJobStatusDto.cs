@@ -7,8 +7,8 @@ namespace Hangfire.JobKits.Worker
         Successed,
         Failed,
         Invalid,
-        Unqueued,
-        Wait
+        Unexecuted,
+        Unstarted
     }
 
     public class MonitorJobStatusDto

@@ -147,6 +147,21 @@
   <data name="MonitorPage_Title" xml:space="preserve">
     <value>Job Monitor</value>
   </data>
+  <data name="MonitorStatus_Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="MonitorStatus_Invalid" xml:space="preserve">
+    <value>Invalid</value>
+  </data>
+  <data name="MonitorStatus_Successed" xml:space="preserve">
+    <value>Successed</value>
+  </data>
+  <data name="MonitorStatus_Unexecuted" xml:space="preserve">
+    <value>Unexecuted</value>
+  </data>
+  <data name="MonitorStatus_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
   <data name="Range_Daily" xml:space="preserve">
     <value>Daily</value>
   </data>

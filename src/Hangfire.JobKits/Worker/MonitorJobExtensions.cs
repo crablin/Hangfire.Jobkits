@@ -12,7 +12,7 @@ namespace Hangfire.JobKits.Worker
 
         internal static string GetFullActionName(this MethodInfo method)
         {
-            return $"{method.DeclaringType.FullName}.{ method.Name}";
+            return $"{method.DeclaringType.Name}.{ method.Name}";
         }
 
         internal static string GetMonitorStateKey(this MonitorJob monitorJob)
@@ -41,7 +41,7 @@ namespace Hangfire.JobKits.Worker
             {
                 var source = connection.GetMonitorState(key);
                 
-                source.Add(DateTime.Now.Ticks.ToString(), dto.ToString());
+                source.Add(DateTime.UtcNow.Ticks.ToString(), dto.ToString());
 
                 connection.SetRangeInHash(key, source);
             }
@@ -49,10 +49,10 @@ namespace Hangfire.JobKits.Worker
 
         internal static MonitorJobStatusDto GetStatus(this MonitorJob job, JobStorage storage)
         {
-            long currentTicks = DateTime.Now.Ticks;
+            long currentTicks = DateTime.UtcNow.Ticks;
 
             if (job.MonitorTime.Ticks > currentTicks)
-                return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+                return new MonitorJobStatusDto(MonitorJobStatus.Unstarted);
 
             var key = job.GetMonitorStateKey();
 
@@ -60,7 +60,7 @@ namespace Hangfire.JobKits.Worker
             {
                 var source = connection.GetMonitorState(key);
 
-                if (source == null) return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+                if (source == null) return new MonitorJobStatusDto(MonitorJobStatus.Unstarted);
 
                 var startTick = job.MonitorTime.Ticks.ToString();
                 var endTick = job.NextTime.Ticks.ToString();
@@ -69,7 +69,7 @@ namespace Hangfire.JobKits.Worker
 
                 if (string.IsNullOrEmpty(lastKey) && job.NextTime.Ticks < currentTicks)
                 {
-                    return new MonitorJobStatusDto(MonitorJobStatus.Unqueued);
+                    return new MonitorJobStatusDto(MonitorJobStatus.Unexecuted);
                 }
                 else if (!string.IsNullOrEmpty(lastKey))
                 {
@@ -84,7 +84,7 @@ namespace Hangfire.JobKits.Worker
                 }
             }
 
-            return new MonitorJobStatusDto(MonitorJobStatus.Wait);
+            return new MonitorJobStatusDto(MonitorJobStatus.Unstarted);
         }
     }
 }

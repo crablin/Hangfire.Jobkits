@@ -59,19 +59,29 @@
                             <td class="align-right min-width">@job.MonitorTime.ToLocalTime().ToString(format)  </td>
                             <td class="align-right min-width">@(jobStatus.ExecutedTime.HasValue ? jobStatus.ExecutedTime.Value.ToLocalTime().ToString(format) : "-" )</td>
                             <td class="align-right min-width">
-                                @if (!string.IsNullOrEmpty(jobStatus.ExecutedJobId))
+                                @switch (jobStatus.Status)
                                 {
-                                    var color = jobStatus.Status == MonitorJobStatus.Successed
-                                        ? "#198754" : jobStatus.Status == MonitorJobStatus.Failed ? "#dc3545"
-                                        : "#ffc107";
-
-                                    <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
-                                        <span class="badge" style="background-color:@(color);">@(jobStatus.Status.ToString())</span>
-</a>
-                                }
-                                else
-                                {
-                                    <span class="badge">@(jobStatus.Status.ToString())</span>
+                                    case MonitorJobStatus.Successed:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#198754;">@(Strings.MonitorStatus_Successed)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Failed:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#dc3545;">@(Strings.MonitorStatus_Failed)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Invalid:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#ff9b07;">@(Strings.MonitorStatus_Invalid)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Unexecuted:
+                                        <span class="badge">@(Strings.MonitorStatus_Unexecuted)</span>
+                                        break;
+                                    default:
+                                        @("-")
+                                        break;
                                 }
 
                             </td>
