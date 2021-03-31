@@ -5,17 +5,15 @@
 @using Hangfire.JobKits.Dashboard.Controls
 @using Hangfire.JobKits.Worker
 @using Hangfire.JobKits.Resources
-@using Hangfire.Storage;
-@using System.Collections.Concurrent;
 @inherits Hangfire.Dashboard.RazorPage
 
 @{
-    Layout = new LayoutPage(Strings.Monitor_Title);
+    Layout = new LayoutPage(Strings.MonitorPage_Title);
 
     string selectedCategory = this.SelectedCategory;
     MonitorMap jobMap = this.Map;
     JobKitOptions options = this.Options;
-
+    
     var availableJobs = jobMap.JobCollection.ContainsKey(selectedCategory)
         ? jobMap.JobCollection[selectedCategory]
         : new List<MonitorJob>();
@@ -26,32 +24,27 @@
 
 }
 
-<link rel="stylesheet" type="text/css" href="@Url.To(JobKitRoute.Monitor.CssUrl)" />
 <script type="text/javascript">
-    var launchUrl = '@Url.To(JobKitRoute.Monitor.LaunchUrl)';
-    var recurringUrl = '@Url.To(JobKitRoute.Monitor.LaunchRecurringUrl)';
-    var jobLinkBaseUrl = '@Url.JobDetails("")';
     
 </script>
-<script type="text/javascript" src="@Url.To(JobKitRoute.Monitor.JsUrl)"></script>
 
 <div class="row">
     <div class="col-md-3">
         @SidebarControlFromMonitor.Render(Html, selectedCategory, jobMap)
     </div>
-    <h1 class="page-header">@(Strings.Monitor_Title)</h1>
+    <h1 class="page-header">@(this.SelectedCategoryText)@(Strings.MonitorPage_Title)</h1>
     <div class="col-md-9">
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>名稱</th>
-                        <th class="min-width">Cron</th>
-                        <th>工作</th>
-                        <th class="align-right min-width">監控時間</th>
-                        <th class="align-right min-width">執行時間</th>
-                        <th class="align-right min-width">執行狀態</th>
-                        <th class="min-width"></th>
+                        <th>@(Strings.MonitorPage_Table_Name)</th>
+                        <th class="min-width">@(Strings.MonitorPage_Table_Cron)</th>
+                        <th>@(Strings.MonitorPage_Table_Action)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_ScheduleTime)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_ExecutedTime)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_Status)</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -66,10 +59,21 @@
                             <td class="align-right min-width">@job.MonitorTime.ToLocalTime().ToString(format)  </td>
                             <td class="align-right min-width">@(jobStatus.ExecutedTime.HasValue ? jobStatus.ExecutedTime.Value.ToLocalTime().ToString(format) : "-" )</td>
                             <td class="align-right min-width">
-                                <label class="label label-default">@(jobStatus.Status.ToString())</label>
-                            </td>
-                            <td class="min-width">
-                                
+                                @if (!string.IsNullOrEmpty(jobStatus.ExecutedJobId))
+                                {
+                                    var color = jobStatus.Status == MonitorJobStatus.Successed
+                                        ? "#198754" : jobStatus.Status == MonitorJobStatus.Failed ? "#dc3545"
+                                        : "#ffc107";
+
+                                    <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                        <span class="badge" style="background-color:@(color);">@(jobStatus.Status.ToString())</span>
+</a>
+                                }
+                                else
+                                {
+                                    <span class="badge">@(jobStatus.Status.ToString())</span>
+                                }
+
                             </td>
                         </tr>
                     }

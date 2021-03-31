@@ -71,19 +71,12 @@ namespace Hangfire.JobKits
                 DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Monitor.Url, x => new MonitorPage(ValidateRangeType.Daily, map, options));
                 DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Monitor.CategoryUrl, x => new MonitorPage(x.Groups["categoryId"].Value, map, options));
 
-                NavigationMenu.Items.Add(page => new MenuItem(Strings.Monitor_Title, page.Url.To(JobKitRoute.Monitor.Url))
+                NavigationMenu.Items.Add(page => new MenuItem(Strings.MonitorPage_Title, page.Url.To(JobKitRoute.Monitor.Url))
                 {
                     Active = page.RequestPath.StartsWith(JobKitRoute.Monitor.Url),
                     Metric = new DashboardMetric("monitor-count", x => new Metric(map.JobCollection.Values.Sum(y => y.Count)))
                 });
-
-                DashboardRoutes.Routes.Add(
-                    JobKitRoute.Monitor.JsUrl,
-                    new ContentDispatcher("application/js", "Hangfire.JobKits.Dashboard.Contents.standby.js", TimeSpan.FromDays(1)));
-
-                DashboardRoutes.Routes.Add(
-                    JobKitRoute.Monitor.CssUrl,
-                    new ContentDispatcher("text/css", "Hangfire.JobKits.Dashboard.Contents.standby.css", TimeSpan.FromDays(1)));
+                
             }
             return configuration;
         }

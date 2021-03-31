@@ -1,7 +1,7 @@
 ﻿using System;
 using Hangfire.JobKits;
 
-namespace CoreSample.Jobs
+namespace CoreSample.Jobs.Validation
 {
 
     public class SendSmsJobValidationAttribute : JobValidationAttribute

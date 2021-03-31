@@ -35,17 +35,17 @@ namespace CoreSample
 
             services.AddHangfire(config =>
             {
-                //config.UseFilter<LogEverythingAttribute>(new LogEverythingAttribute());
-                //   config.UseFilter(provider.GetRequiredService<AutomaticRetryAttribute>());
+                
                 config.UseConsole();
-                //config.UseSqlServerStorage(@"Server=localhost\SQLEXPRESS,1433;Initial Catalog=HangFireDataBase;Persist Security Info=False;User ID=sa;Password=~1qaz;");
+                
                 //config.UseSqlServerStorage(@"Server=54.249.186.202,1433;Initial Catalog=HangFireDataBase;Persist Security Info=False;User ID=sa;Password=#WSX2wsx!QAZ;");
                 config.UseMemoryStorage();
+
                 config.UseJobKits(typeof(Startup).Assembly);
                 config.UseJobMonitor(typeof(Startup).Assembly);
 
             });
-            //services.AddJobMonitor();
+            
             services.AddMvc();
 
             var autofacContainer = services.BuildAutofacContainer();
@@ -63,9 +63,9 @@ namespace CoreSample
             {
                 Authorization = new List<IDashboardAuthorizationFilter>()
             });
+
             app.UseHangfireMonitor();
-            //app.UseValidation(new JobValidation(app.ApplicationServices.GetService<IServiceProvider>()));
-            //app.UseHangfireMoitor(typeof(Startup).Assembly);
+            
         }
     }
     public static class AutofacConfig

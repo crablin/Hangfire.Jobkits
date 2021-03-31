@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Hangfire.Annotations;
 using Hangfire.JobKits.Providers;
 using Hangfire.JobKits.Worker;
@@ -43,33 +42,28 @@ namespace Hangfire.JobKits
                 {
                     var isValid = Validate();
 
-                    SetState(context, isValid ? MonitorJobStatus.Successed : MonitorJobStatus.Invalid);
+                    var dto = new MonitorJobStatusDto
+                    {
+                        Status = isValid ? MonitorJobStatus.Successed : MonitorJobStatus.Invalid,
+                        ExecutedTime = DateTime.UtcNow,
+                        ExecutedJobId = context.BackgroundJob.Id
+                    };
+
+                    SetState(context, dto);
                 }
                 else if (context.CandidateState is FailedState state)
                 {
-                    SetState(context, MonitorJobStatus.Failed);
+                    SetState(context, new MonitorJobStatusDto(MonitorJobStatus.Failed));
                 }
             }
 
-            private void SetState(ElectStateContext context, MonitorJobStatus jobStatus)
+            private void SetState(ElectStateContext context, MonitorJobStatusDto dto)
             {
-                var method = context.BackgroundJob.Job.Method;
-                var key = $"monitor-job:{DateTime.Now.Date.Ticks}:{method.DeclaringType.FullName}.{method.Name}";
+                
+                var actionName = context.BackgroundJob.Job.Method.GetFullActionName();
+                var key = context.Connection.GetMonitorStateKey(DateTime.Today, actionName);
 
-                lock (_lockFlag)
-                {
-                    var source = context.Connection.GetAllEntriesFromHash(key);
-
-                    if (source == null)
-                        source = new Dictionary<string, string>();
-
-                    source.Add(
-                        DateTime.Now.Ticks.ToString(),
-                        $"{jobStatus};{DateTime.Now.Ticks};{context.BackgroundJob.Id}");
-
-                    context.Connection.SetRangeInHash(key, source);
-                }
-
+                context.Connection.SetMonitorState(key, dto);
             }
         }
     }

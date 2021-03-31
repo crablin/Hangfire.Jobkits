@@ -6,30 +6,6 @@ using System.Text;
 
 namespace Hangfire.JobKits.Worker
 {
-    public enum MonitorJobStatus
-    {
-        Successed,
-        Failed,
-        Invalid,
-        Unqueued,
-        Wait
-    }
-
-    public class MonitorJobStatusDto
-    {
-        public MonitorJobStatusDto()
-        {
-        }
-
-        public MonitorJobStatusDto(MonitorJobStatus status)
-        {
-            Status = status;
-        }
-
-        public MonitorJobStatus Status { get; set; }
-        public DateTime? ExecutedTime { get; set; }
-        public string ExecutedJobId { get; set; }
-    }
 
     public class MonitorJob
     {
@@ -41,44 +17,7 @@ namespace Hangfire.JobKits.Worker
         public string Name { get; }
         public MethodInfo Method { get; }
         public string ActionName { get; }
-
-        public MonitorJobStatusDto GetStatus(JobStorage storage)
-        {
-            if (MonitorTime <= DateTime.Now)
-                return new MonitorJobStatusDto(MonitorJobStatus.Wait);
-
-            var key = $"monitor-job:{MonitorTime.Date.Ticks}:{ActionName}";
-
-            using (var connection = storage.GetConnection())
-            {
-                var source = connection.GetAllEntriesFromHash(key);
-
-                if (source == null) return new MonitorJobStatusDto(MonitorJobStatus.Wait);
-
-                var startTick = MonitorTime.Ticks.ToString();
-                var endTick = NextTime.Ticks.ToString();
-                var lastKey = source.Keys.OrderBy(k => k)
-                    .LastOrDefault(k => string.Compare(k, startTick) >= 0 && string.Compare(k, endTick) == -1);
-
-                if (string.IsNullOrEmpty(lastKey) && NextTime < DateTime.Now)
-                {
-                    return new MonitorJobStatusDto(MonitorJobStatus.Unqueued);
-                }
-                else if (!string.IsNullOrEmpty(lastKey))
-                {
-                    var result = source[lastKey].Split(';');
-
-                    return new MonitorJobStatusDto
-                    {
-                        Status = (MonitorJobStatus)Enum.Parse(typeof(MonitorJobStatus), result[0]),
-                        ExecutedTime = new DateTime(long.Parse(result[1])),
-                        ExecutedJobId = result[2]
-                    };
-                }
-            }
-            return new MonitorJobStatusDto(MonitorJobStatus.Wait);
-        }
-
+        
         public MonitorJob(
             JobValidationAttribute vaildateAttribute,
             MethodInfo method,
@@ -93,7 +32,9 @@ namespace Hangfire.JobKits.Worker
             Range = vaildateAttribute.Range;
 
             Method = method;
-            ActionName = $"{method.DeclaringType.Name}.{method.Name}";
+            ActionName = method.GetFullActionName();
+
+            
 
             MonitorTime = monitorTime;
             NextTime = nextTime;
