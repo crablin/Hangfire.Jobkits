@@ -11,11 +11,24 @@ Hangfire.Jobkits providers define standby job to launch on background or recurri
 
 ## Features
 
+### Standby Page
+![Hangfire Standby](./diagram/diagram_standby.png)
+
 - **Definition job** : category job and method
 - **Auto generate parameters** : get method parameters to queue job on hangfire.
 - **Set recurring job** : do not add recurring job on startup.cs, you can launch job on recurring anytime.
 - **Support anothers** : support denpendency injection and Hangfire.Console 
 
+### Monitor Page
+![Hangfire Standby](./diagram/diagram_monitor.png)
+
+- **Period monitor** : get daily, weekly and monthly job list.
+- **Execute status** : assign job check time range, you can check status after job is executed.
+- **Custom vaildate** : while job is executed, you can trigger customize validate function to display on monitor list.
+
+## Job Singleton 
+
+- **Limit job** : only single job on enqueued and processing pool.
 ## Steup
 
 In .Net Core's Startup.cs:
@@ -26,7 +39,10 @@ public void ConfigureServices(IServiceCollection services)
     services.AddHangfire(config =>
     {
         config.UseSqlServerStorage("connectionSting");
+        // Standby page
         config.UseJobkits(typeof(Startup).Assembly);
+        // Monitor page
+        config.UseJobMonitor(typeof(Startup).Assembly);
     });
 }
 ```
@@ -36,7 +52,8 @@ Otherwire,
 ``` c#
 GlobalConfiguration.Configuration
     .UseSqlServerStorage("connectionSting")
-    .UseJobkits(typeof(Startup).Assembly);
+    .UseJobkits(typeof(Startup).Assembly)
+    .UseJobMonitor(typeof(Startup).Assembly);
 ```
 
 ### Additional options
@@ -77,7 +94,7 @@ public class ReportJob
 
 ### JobLauncher
 
-- **CategoryName** : define category name on sidebar
+- **CategoryName** : define category name on  sidebar of standby page
 
 ``` c#
 // ReportJob.cs
@@ -163,6 +180,81 @@ public class ReportJob
                   DefaultValue = "2018/10/30", )]DateTime end)
     {
         //code ... 
+    }
+}
+```
+
+## Monitor Attribute
+
+Decorate you code on monitor page.
+- **JobValidation** : job must be monitored, you can describe range and schedule time (cron).
+- **CustomValidation** : inherit this **JobValidation** attribute, you can customize conditions to valid on any single job.
+
+### JobValidation
+
+- **Name** : display name
+- **Cron** : compute scheulde time to every job on monitor page. 
+- **Range** : define period category on sidebar of monitor page, enum variables: **Daily**, **Weekly**, **Monthly**.
+
+``` c#
+[JobLauncher("Report")]
+public class ReportJob
+{
+    [JobMethod("Export file on members")]
+    [JobValidation(Name = "Export Member's file", Cron = "0 0,12 * * *", Range = ValidateRangeType.Daily)]
+    public void Process(DateTime start, DateTime end)
+    {
+        //code ... 
+    }
+}
+```
+
+### Customize JobValidation
+
+if the method must be valid by customize, you can follow this code:
+
+``` c#
+public class CustomValidationAttribute : JobValidationAttribute
+    {
+
+        public CustomValidationAttribute() : base(typeof(CustomValidationFilter))
+        { }
+
+        private class CustomValidationFilter : JobValidationStateFilter
+        {
+            private IServiceProvider _serviceProvider;
+
+            public CustomValidationFilter(IServiceProvider serviceProvider)
+            {
+                _serviceProvider = serviceProvider;
+            }
+
+            public override bool Validate()
+            {
+                // condition on custom
+            }
+        }
+
+    }
+
+```
+
+You can use `IServiceProvider` to instance your module to get table or valid classes by dependency injection.
+
+### JobSingleton
+
+if your job cannot be repeated, you can append this attribute. It throws exception when job trigger two times.
+
+``` c#
+[JobLauncher(CategoryName = "Delay")]
+public class DelayJob
+{
+    
+    [JobSingleton]
+    [JobMethod]
+    public void Process(PerformContext context, int delaySec)
+    {
+        //code ...
     }
 }
 ```

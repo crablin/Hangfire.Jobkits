@@ -22,8 +22,8 @@ namespace Hangfire.JobKits
                 RequireConfirmation = true
             }, assemblies);
 
-        [PublicAPI]
-        public static IGlobalConfiguration UseJobKits(
+        // [PublicAPI]
+        internal static IGlobalConfiguration UseJobKits(
             this IGlobalConfiguration configuration, JobKitOptions options, params Assembly[] assemblies)
         {
             var map = StandbyHelper.GetMap(assemblies);
