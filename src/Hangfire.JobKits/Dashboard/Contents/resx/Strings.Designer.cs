@@ -88,6 +88,141 @@ namespace Hangfire.JobKits.Resources {
         }
         
         /// <summary>
+        ///   查詢類似 Action 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_Action {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_Action", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Cron 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_Cron {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_Cron", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Executed Time 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_ExecutedTime {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_ExecutedTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Name 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_Name {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Scheduled Time 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_ScheduleTime {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_ScheduleTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Status 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Table_Status {
+            get {
+                return ResourceManager.GetString("MonitorPage_Table_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Job Monitor 的當地語系化字串。
+        /// </summary>
+        public static string MonitorPage_Title {
+            get {
+                return ResourceManager.GetString("MonitorPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Failed 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Failed {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Invalid 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Invalid {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Successed 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Successed {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Successed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Unexecuted 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Unexecuted {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Unexecuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Unstarted 的當地語系化字串。
+        /// </summary>
+        public static string MonitorStatus_Unstarted {
+            get {
+                return ResourceManager.GetString("MonitorStatus_Unstarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Daily 的當地語系化字串。
+        /// </summary>
+        public static string Range_Daily {
+            get {
+                return ResourceManager.GetString("Range_Daily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Monthly 的當地語系化字串。
+        /// </summary>
+        public static string Range_Monthly {
+            get {
+                return ResourceManager.GetString("Range_Monthly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Weekly 的當地語系化字串。
+        /// </summary>
+        public static string Range_Weekly {
+            get {
+                return ResourceManager.GetString("Range_Weekly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 An error occured during launching:  的當地語系化字串。
         /// </summary>
         public static string Standby_Failure {

@@ -5,8 +5,10 @@ using Hangfire.Annotations;
 using Hangfire.Dashboard;
 using Hangfire.JobKits.Dashboard;
 using Hangfire.JobKits.Dashboard.Contents;
+using Hangfire.JobKits.Providers;
 using Hangfire.JobKits.Resources;
 using Hangfire.JobKits.Worker;
+using Microsoft.AspNetCore.Builder;
 
 namespace Hangfire.JobKits
 {
@@ -20,8 +22,8 @@ namespace Hangfire.JobKits
                 RequireConfirmation = true
             }, assemblies);
 
-        [PublicAPI]
-        public static IGlobalConfiguration UseJobKits(
+        // [PublicAPI]
+        internal static IGlobalConfiguration UseJobKits(
             this IGlobalConfiguration configuration, JobKitOptions options, params Assembly[] assemblies)
         {
             var map = StandbyHelper.GetMap(assemblies);
@@ -48,6 +50,44 @@ namespace Hangfire.JobKits
                     new ContentDispatcher("text/css", "Hangfire.JobKits.Dashboard.Contents.standby.css", TimeSpan.FromDays(1)));
             }
             return configuration;
+        }
+
+        [PublicAPI]
+        public static IGlobalConfiguration UseJobMonitor(
+            this IGlobalConfiguration configuration, params Assembly[] assemblies)
+            => configuration.UseJobMonitor(new JobKitOptions
+            {
+                RequireConfirmation = true
+            }, assemblies);
+
+        [PublicAPI]
+        public static IGlobalConfiguration UseJobMonitor(
+            this IGlobalConfiguration configuration, JobKitOptions options, params Assembly[] assemblies)
+        {
+            var map = MonitorHelper.GetMap(assemblies);
+            
+            if (map != null)
+            {
+                DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Monitor.Url, x => new MonitorPage(ValidateRangeType.Daily, map, options));
+                DashboardRoutes.Routes.AddRazorPage(JobKitRoute.Monitor.CategoryUrl, x => new MonitorPage(x.Groups["categoryId"].Value, map, options));
+
+                NavigationMenu.Items.Add(page => new MenuItem(Strings.MonitorPage_Title, page.Url.To(JobKitRoute.Monitor.Url))
+                {
+                    Active = page.RequestPath.StartsWith(JobKitRoute.Monitor.Url),
+                    Metric = new DashboardMetric("monitor-count", x => new Metric(map.JobCollection.Values.Sum(y => y.Count)))
+                });
+                
+            }
+            return configuration;
+        }
+        
+        [PublicAPI]
+        public static IApplicationBuilder UseHangfireMonitor(
+            [NotNull] this IApplicationBuilder app)
+        {
+            Common.JobFilterProviders.Providers.Add(new TypeJobFilterProvider(app.ApplicationServices));
+            
+            return app;
         }
     }
 }

@@ -126,6 +126,51 @@
   <data name="Field_Missing" xml:space="preserve">
     <value>Fields are missing:</value>
   </data>
+  <data name="MonitorPage_Table_Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="MonitorPage_Table_Cron" xml:space="preserve">
+    <value>Cron</value>
+  </data>
+  <data name="MonitorPage_Table_ExecutedTime" xml:space="preserve">
+    <value>Executed Time</value>
+  </data>
+  <data name="MonitorPage_Table_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="MonitorPage_Table_ScheduleTime" xml:space="preserve">
+    <value>Scheduled Time</value>
+  </data>
+  <data name="MonitorPage_Table_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MonitorPage_Title" xml:space="preserve">
+    <value>Job Monitor</value>
+  </data>
+  <data name="MonitorStatus_Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="MonitorStatus_Invalid" xml:space="preserve">
+    <value>Invalid</value>
+  </data>
+  <data name="MonitorStatus_Successed" xml:space="preserve">
+    <value>Successed</value>
+  </data>
+  <data name="MonitorStatus_Unexecuted" xml:space="preserve">
+    <value>Unexecuted</value>
+  </data>
+  <data name="MonitorStatus_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
+  <data name="Range_Daily" xml:space="preserve">
+    <value>Daily</value>
+  </data>
+  <data name="Range_Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="Range_Weekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
   <data name="Standby_Failure" xml:space="preserve">
     <value>An error occured during launching: </value>
   </data>

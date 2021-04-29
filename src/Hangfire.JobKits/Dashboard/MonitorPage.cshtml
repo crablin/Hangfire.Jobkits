@@ -1,0 +1,94 @@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
+@using System.Linq
+@using Hangfire.Dashboard.Pages
+@using Hangfire.JobKits
+@using Hangfire.JobKits.Dashboard.Controls
+@using Hangfire.JobKits.Worker
+@using Hangfire.JobKits.Resources
+@inherits Hangfire.Dashboard.RazorPage
+
+@{
+    Layout = new LayoutPage(Strings.MonitorPage_Title);
+
+    string selectedCategory = this.SelectedCategory;
+    MonitorMap jobMap = this.Map;
+    JobKitOptions options = this.Options;
+    
+    var availableJobs = jobMap.JobCollection.ContainsKey(selectedCategory)
+        ? jobMap.JobCollection[selectedCategory]
+        : new List<MonitorJob>();
+
+    var format = selectedCategory == "Daily"
+        ? "HH:mm" : "MM-dd HH:mm";
+
+
+}
+
+<script type="text/javascript">
+    
+</script>
+
+<div class="row">
+    <div class="col-md-3">
+        @SidebarControlFromMonitor.Render(Html, selectedCategory, jobMap)
+    </div>
+    <h1 class="page-header">@(this.SelectedCategoryText)@(Strings.MonitorPage_Title)</h1>
+    <div class="col-md-9">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@(Strings.MonitorPage_Table_Name)</th>
+                        <th class="min-width">@(Strings.MonitorPage_Table_Cron)</th>
+                        <th>@(Strings.MonitorPage_Table_Action)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_ScheduleTime)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_ExecutedTime)</th>
+                        <th class="align-right min-width">@(Strings.MonitorPage_Table_Status)</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in availableJobs.OrderBy(x => x.MonitorTime))
+                    {
+                        var jobStatus = job.GetStatus(Storage);
+
+                        <tr class="js-jobs-list-row hover">
+                            <td class="word-break width-15">@job.Name</td>
+                            <td class="word-break width-15"><code>@job.Cron</code></td>
+                            <td class="align-right min-width">@job.ActionName </td>
+                            <td class="align-right min-width">@job.MonitorTime.ToLocalTime().ToString(format)  </td>
+                            <td class="align-right min-width">@(jobStatus.ExecutedTime.HasValue ? jobStatus.ExecutedTime.Value.ToLocalTime().ToString(format) : "-" )</td>
+                            <td class="align-right min-width">
+                                @switch (jobStatus.Status)
+                                {
+                                    case MonitorJobStatus.Successed:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#198754;">@(Strings.MonitorStatus_Successed)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Failed:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#dc3545;">@(Strings.MonitorStatus_Failed)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Invalid:
+                                        <a href="@(Url.JobDetails(jobStatus.ExecutedJobId))">
+                                            <span class="badge" style="background-color:#ff9b07;">@(Strings.MonitorStatus_Invalid)</span>
+                                        </a>
+                                        break;
+                                    case MonitorJobStatus.Unexecuted:
+                                        <span class="badge">@(Strings.MonitorStatus_Unexecuted)</span>
+                                        break;
+                                    default:
+                                        @("-")
+                                        break;
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
